@@ -27,13 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +113,7 @@ fun Frame2(modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = "Start Game",
-                    color = Color(0xfff5f5f5),
+                    color = Color(0xFFFFFEFF),
                     lineHeight = 6.25.em,
                     style = TextStyle(
                         fontSize = 16.sp))
