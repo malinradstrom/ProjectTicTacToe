@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +53,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .requiredWidth(width = 412.dp)
                     .requiredHeight(height = 917.dp)
-                    .background(color = Color.White)
+                    .background(color = White)
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
@@ -71,11 +72,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             Text(
                                 text = "Multiplayer",
                                 color = Color(0xff1e1e1e),
-                                style = TextStyle(fontSize = 16.sp))
+                                lineHeight = 6.25.em,
+                                style = TextStyle(
+                                    fontSize = 16.sp))
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = Color.White),
-                            modifier = Modifier
+                        modifier = Modifier
                             .requiredWidth(width = 240.dp))
                     OutlinedTextField(
                         value = "",

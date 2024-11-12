@@ -1,30 +1,26 @@
 package com.example.projecttictactoe
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.composable
+import com.example.projecttictactoe.com.example.projecttictactoe.GameScreen
+import com.example.projecttictactoe.com.example.projecttictactoe.MenuScreen
 import com.example.projecttictactoe.ui.theme.ProjectTicTacToeTheme
 
+
 class MainActivity : ComponentActivity() {
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ProjectTicTacToeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                TicTacToeApp()
             }
         }
     }
@@ -32,28 +28,38 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TicTacToeApp() {
-    val navController = rememberNavController() // Skapar och sparar en NavController som hanterar navigeringen mellan skärmar
+    val navController = androidx.navigation.compose.rememberNavController()
 
-    NavHost(navController = navController, startDestination = "homeScreen") {
-        composable("homeScreen") { HomeScreen(navController) } // Startskärmen som visas först
-        composable("menuScreen") { MenuScreen(navController) } // Skärmen som visar menyval
-        composable("appIcon") { AppIcon() } // Skärmen som visar appens ikon
-        composable("gameScreen") { GameScreen(navController) } // Skärmen där spelet spelas
+    androidx.navigation.compose.NavHost( // Anvand androidx.navigation.compose.NavHost
+        navController = navController,
+        startDestination = "HomeScreen"
+    ) {
+        composable("HomeScreen") { HomeScreen1(navController) }
+        composable("menuScreen") { MenuScreen1(navController) }
+        composable("appIcon") { AppIcon1() }
+        composable("gameScreen") { GameScreen1(navController) }
     }
 }
 
+fun composable(string: String, function: @Composable () -> Unit) {}
+
+@SuppressLint("NewApi")
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun AppIcon1() {
+    AppIcon(Modifier)
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    ProjectTicTacToeTheme {
-        Greeting("Android")
-    }
+fun GameScreen1(navController: androidx.navigation.NavController) {
+    GameScreen(Modifier)
+}
+
+@Composable
+fun MenuScreen1(navController: androidx.navigation.NavController) {
+    MenuScreen(Modifier)
+}
+
+@Composable
+fun HomeScreen1(navController: androidx.navigation.NavController) {
+    HomeScreen(Modifier)
 }
