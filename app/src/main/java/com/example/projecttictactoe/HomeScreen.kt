@@ -76,9 +76,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                 style = TextStyle(
                                     fontSize = 16.sp))
                         },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White),
-                        modifier = Modifier
+                        colors = TextFieldDefaults.colors(
+                            Color.White),
+                            modifier = Modifier
                             .requiredWidth(width = 240.dp))
                     OutlinedTextField(
                         value = "",
@@ -91,8 +91,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                 style = TextStyle(
                                     fontSize = 16.sp))
                         },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.White),
+                        colors = TextFieldDefaults.colors(
+                            Color.White),
                         modifier = Modifier
                             .requiredWidth(width = 240.dp))
                 }
