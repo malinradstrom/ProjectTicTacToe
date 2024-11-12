@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.TextStyle
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -110,7 +112,7 @@ fun TextStyle(fontSize: TextUnit, fontWeight: FontWeight) {
 }
 
 @Composable
-fun BorderStroke(x0: Dp, x1: White) {
+fun BorderStroke(x0: Dp, x1: Color) {
     TODO("Not yet implemented")
 }
 

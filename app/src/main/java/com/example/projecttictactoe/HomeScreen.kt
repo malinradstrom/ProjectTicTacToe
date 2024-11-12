@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -131,13 +132,19 @@ fun Frame2(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Row(
-    horizontalArrangement: Arrangement.Horizontal,
-    verticalAlignment: Alignment.Vertical,
-    modifier: Modifier,
-    content: @Composable () -> ERROR
+fun CustomRow(
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
-    TODO("Not yet implemented")
+    Row(
+        horizontalArrangement = horizontalArrangement,
+        verticalAlignment = verticalAlignment,
+        modifier = modifier
+    ) {
+        content()
+    }
 }
 
 @Composable
