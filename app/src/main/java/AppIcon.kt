@@ -1,3 +1,5 @@
+package com.example.projecttictactoe
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -37,6 +39,7 @@ fun AppIcon(modifier: Modifier = Modifier) {
             .requiredSize(size = 60.dp)
     ) {
         Rectangle1()
+        val Res = null
         Image(
             painter = painterResource(id = R.drawable.line1),
             contentDescription = "Line 1",
@@ -70,8 +73,8 @@ fun AppIcon(modifier: Modifier = Modifier) {
                 .background(color = Color(0xffd9d9d9))
                 .border(shape = CircleShape,
                     border = BorderStroke(
-                    width = 1.dp, color = Color.White
-                )))
+                        width = 1.dp, color = Color.White
+                    )))
         Text(
             text = "X",
             color = Color.White,
