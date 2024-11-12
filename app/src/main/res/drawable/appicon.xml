@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="60" height="60" rx="14" fill="#5D4B65"/>
+        <path d="M20.3333 7.78381L20.3333 52.8649" stroke="white" stroke-width="2"/>
+        <line x1="39.6667" y1="7.78381" x2="39.6667" y2="52.8649" stroke="white" stroke-width="2"/>
+        <line x1="4.66667" y1="22.027" x2="54.6667" y2="22.027" stroke="white" stroke-width="2"/>
+        <line y1="-1" x2="50.0011" y2="-1" transform="matrix(1 0 -0.00036535 1 4.66615 40.054)" stroke="white" stroke-width="2"/>
+        <g style="mix-blend-mode:luminosity">
+            <path d="M30 34.5C32.2091 34.5 34 32.7091 34 30.5C34 28.2909 32.2091 26.5 30 26.5C27.7909 26.5 26 28.2909 26 30.5C26 32.7091 27.7909 34.5 30 34.5Z" fill="#D9D9D9"/>
+            <path d="M30 34.5C32.2091 34.5 34 32.7091 34 30.5C34 28.2909 32.2091 26.5 30 26.5C27.7909 26.5 26 28.2909 26 30.5C26 32.7091 27.7909 34.5 30 34.5Z" stroke="white"/>
+        </g>
+        <g style="mix-blend-mode:luminosity">
+            <circle cx="48.5" cy="13.5" r="4" fill="#D9D9D9"/>
+            <circle cx="48.5" cy="13.5" r="4" stroke="white"/>
+        </g>
+        <path d="M27.875 43.2727L29.9631 46.6861H30.0312L32.1193 43.2727H33.6449L30.9261 47.6364L33.6619 52H32.1278L30.0312 48.6335H29.9631L27.8665 52H26.3324L29.1151 47.6364L26.3494 43.2727H27.875Z" fill="white"/>
+        <path d="M33.5 30.5C33.5 32.433 31.933 34 30 34C28.067 34 26.5 32.433 26.5 30.5C26.5 28.567 28.067 27 30 27C31.933 27 33.5 28.567 33.5 30.5Z" fill="#5D4B65"/>
+        <circle cx="48.5" cy="13.5" r="3.5" fill="#5D4B65"/>
+        <path d="M9.875 9.27273L11.9631 12.6861H12.0312L14.1193 9.27273H15.6449L12.9261 13.6364L15.6619 18H14.1278L12.0312 14.6335H11.9631L9.86648 18H8.33239L11.1151 13.6364L8.34943 9.27273H9.875Z" fill="white"/>
+    </svg>
+
+</selector>
