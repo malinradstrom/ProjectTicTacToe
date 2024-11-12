@@ -77,7 +77,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                     fontSize = 16.sp))
                         },
                         colors = TextFieldDefaults.colors(
-                            Color.White),
+                            White),
                             modifier = Modifier
                             .requiredWidth(width = 240.dp))
                     OutlinedTextField(
@@ -92,7 +92,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                     fontSize = 16.sp))
                         },
                         colors = TextFieldDefaults.colors(
-                            Color.White),
+                            White),
                         modifier = Modifier
                             .requiredWidth(width = 240.dp))
                 }
