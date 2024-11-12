@@ -213,7 +213,7 @@ fun TypeSelectedStateEnabled(modifier: Modifier = Modifier) {
                         checked = checkedState.value,
                         onCheckedChange = { checkedState.value = it })
                 }
-                Icon(
+                Icon( //Small checkmark
                     painter = painterResource(id = R.drawable.check_small),
                     contentDescription = "check_small",
                     tint = Color.White,
