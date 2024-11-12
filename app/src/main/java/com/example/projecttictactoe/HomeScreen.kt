@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Frame2(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 415.dp)
@@ -71,13 +71,11 @@ fun Frame2(modifier: Modifier = Modifier) {
                             Text(
                                 text = "Multiplayer",
                                 color = Color(0xff1e1e1e),
-                                lineHeight = 6.25.em,
-                                style = TextStyle(
-                                    fontSize = 16.sp))
+                                style = TextStyle(fontSize = 16.sp))
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = Color.White),
-                        modifier = Modifier
+                            modifier = Modifier
                             .requiredWidth(width = 240.dp))
                     OutlinedTextField(
                         value = "",
@@ -178,6 +176,8 @@ fun AlignCenter(modifier: Modifier = Modifier) {
 
 @Preview(widthDp = 415, heightDp = 917)
 @Composable
-private fun Frame2Preview() {
-    Frame2(Modifier)
+private fun HomeScreenPreview() {
+    MaterialTheme {
+        HomeScreen(Modifier)
+    }
 }

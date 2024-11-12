@@ -30,7 +30,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun TicTacToeApp() {
+    val navController = rememberNavController() // Skapar och sparar en NavController som hanterar navigeringen mellan skärmar
 
+    NavHost(navController = navController, startDestination = "homeScreen") {
+        composable("homeScreen") { HomeScreen(navController) } // Startskärmen som visas först
+        composable("menuScreen") { MenuScreen(navController) } // Skärmen som visar menyval
+        composable("appIcon") { AppIcon() } // Skärmen som visar appens ikon
+        composable("gameScreen") { GameScreen(navController) } // Skärmen där spelet spelas
+    }
+}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
