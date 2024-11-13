@@ -1,32 +1,42 @@
 package com.example.projecttictactoe
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,123 +46,160 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
+    var userName by remember { mutableStateOf("") }
     Box(
         modifier = modifier
-            .requiredWidth(width = 415.dp)
+            .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .requiredWidth(width = 412.dp)
                 .requiredHeight(height = 917.dp)
+                .background(color = Color.White)
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .requiredWidth(width = 412.dp)
-                    .requiredHeight(height = 917.dp)
-                    .background(color = White)
+                    .fillMaxSize()
+                    .background(color = Color(0xffc1aeca))
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = Color(0xffc1aeca))
+                        .requiredWidth(width = 412.dp)
+                        .requiredHeight(height = 917.dp)
                         .padding(horizontal = 24.dp,
                             vertical = 160.dp)
                 ) {
                     AlignCenter()
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = {
-                            Text(
-                                text = "Multiplayer",
-                                color = Color(0xff1e1e1e),
-                                lineHeight = 6.25.em,
-                                style = TextStyle(
-                                    fontSize = 16.sp))
-                        },
-                        colors = TextFieldDefaults.colors(
-                            White),
-                            modifier = Modifier
-                            .requiredWidth(width = 240.dp))
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = {
-                            Text(
-                                text = "Add Name:",
-                                color = Color(0xff1e1e1e),
-                                lineHeight = 6.25.em,
-                                style = TextStyle(
-                                    fontSize = 16.sp))
-                        },
-                        colors = TextFieldDefaults.colors(
-                            White),
+                }
+                TextField(
+                    value = userName,
+                    onValueChange = {newText: String -> userName = newText},
+                    label = {
+                        Text(
+                            text = "User Name:",
+                            color = Color(0xff49454f),
+                            lineHeight = 1.33.em,
+                            style = MaterialTheme.typography.bodySmall)
+                    },
+                    placeholder = { Text("Input") },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {}
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .requiredSize(size = 48.dp)
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .clip(shape = RoundedCornerShape(1.dp))
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .padding(all = 8.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.cancelbutton),
+                                            contentDescription = "Icon",
+                                            tint = Color(0xff49454f))
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        Color(0xff1d1b20),
+                        Color(0xffe6e0e9)),
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 101.dp,
+                            y = 430.dp)
+                        .requiredWidth(width = 210.dp)
+                        .requiredHeight(height = 56.dp)
+                        .clip(shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)))
+                OutlinedButton(
+                    onClick = { },
+                    shape = RoundedCornerShape(18.dp), //round corners to start game button
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
+                    contentPadding = PaddingValues(all = 12.dp),
+                    border = BorderStroke(1.dp, Color(0xff2c2c2c)),
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 112.dp,
+                            y = 602.dp)
+                        .requiredWidth(width = 188.dp)
+                        .requiredHeight(height = 78.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .requiredWidth(width = 240.dp))
+                            .requiredWidth(width = 188.dp)
+                            .requiredHeight(height = 78.dp)
+                    ) {
+                        Text(
+                            text = "Start Game",
+                            color = Color(0xfff5f5f5),
+                            lineHeight = 6.25.em,
+                            style = TextStyle(fontSize = 16.sp)
+                        )
+                        }
+                    }
                 }
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 124.dp,
-                        y = 612.dp)
-                    .requiredWidth(width = 165.dp)
-                    .requiredHeight(height = 68.dp)
-                    .clip(shape = RoundedCornerShape(8.dp))
-                    .background(color = Color(0xff2c2c2c))
-                    .border(border = BorderStroke(1.dp, Color(0xff2c2c2c)),
-                        shape = RoundedCornerShape(8.dp))
-                    .padding(all = 12.dp)
-            ) {
-                Text(
-                    text = "Start Game",
-                    color = Color(0xFFFFFEFF),
-                    lineHeight = 6.25.em,
-                    style = TextStyle(
-                        fontSize = 16.sp))
-            }
-            Image(
+        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopEnd // Align to top right
+    ) {
+        Menu(
+            modifier = Modifier
+                .padding(20.dp) // Add padding for spacing
+        )
+    }
+    }
+
+@Composable
+fun Menu(modifier: Modifier = Modifier) {
+    IconButton(
+        onClick = { },
+        modifier = modifier
+            .size(48.dp)
+            .clip(RectangleShape)
+    ) {
+        Box(
+            modifier = Modifier
+                .requiredWidth(width = 37.dp)
+                .requiredHeight(height = 52.dp)
+        ) {
+            Icon(
                 painter = painterResource(id = R.drawable.menu),
-                contentDescription = "Menu",
+                contentDescription = "Icon",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 356.dp,
-                        y = 140.dp)
-                    .requiredWidth(width = 37.dp)
-                    .requiredHeight(height = 52.dp))
+                    .fillMaxSize()
+                    .border(border = BorderStroke(10.dp, Color.Transparent)))
         }
     }
 }
 
-@Composable
-fun CustomRow(
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    verticalAlignment: Alignment.Vertical = Alignment.Top,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    Row(
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-        modifier = modifier
-    ) {
-        content()
-    }
-}
 
 @Composable
 fun AlignCenter(modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        contentAlignment = Alignment.TopCenter,
         modifier = modifier
     ) {
         Text(
@@ -162,25 +209,15 @@ fun AlignCenter(modifier: Modifier = Modifier) {
             lineHeight = 1.67.em,
             style = TextStyle(
                 fontSize = 72.sp,
-                fontWeight = FontWeight.Bold),
+                fontWeight = FontWeight.SemiBold,
+                shadow = Shadow(color = Color.White, offset = Offset(0f, 6f), blurRadius = 8f)),
             modifier = Modifier
                 .fillMaxWidth())
-        Text(
-            text = "",
-            color = Color(0xff757575),
-            textAlign = TextAlign.Center,
-            lineHeight = 3.75.em,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(align = Alignment.CenterVertically))
     }
 }
 
-@Preview(widthDp = 415, heightDp = 917)
+@Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun HomeScreenPreview() {
-    MaterialTheme {
-        HomeScreen(Modifier)
-    }
+    HomeScreen(Modifier)
 }
