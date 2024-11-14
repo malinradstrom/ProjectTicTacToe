@@ -1,4 +1,4 @@
-package com.example.projecttictactoe.com.example.projecttictactoe
+package com.example.projecttictactoe
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -253,8 +252,9 @@ fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: Stri
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 108.dp, y = 253.dp)
+                    .offset(x = 110.dp, y = 253.dp)
                     .requiredHeight(height = 40.dp)
+                    .requiredWidth(width = 120.dp)
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),

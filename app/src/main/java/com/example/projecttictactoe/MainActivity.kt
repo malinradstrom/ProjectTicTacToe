@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.example.projecttictactoe.com.example.projecttictactoe.GameScreen
-import com.example.projecttictactoe.com.example.projecttictactoe.MenuScreen
+import com.example.projecttictactoe.GameScreen
+import com.example.projecttictactoe.MenuScreen
 import com.example.projecttictactoe.ui.theme.ProjectTicTacToeTheme
 
 
