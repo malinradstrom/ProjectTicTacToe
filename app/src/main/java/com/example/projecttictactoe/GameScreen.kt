@@ -4,163 +4,133 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.projecttictactoe.R
-
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun GameScreen(modifier: Modifier = Modifier) {
+fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
+    var currentPlayer by remember { mutableStateOf("X") }
+    val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
+    var winner by remember { mutableStateOf<String?>(null) }
+    var showWinnerDialog by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
+
     Box(
         modifier = modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
             .clip(shape = RoundedCornerShape(30.dp))
     ) {
-        Column(
-            modifier = Modifier
-                .requiredWidth(width = 412.dp)
-                .requiredHeight(height = 917.dp)
-                .background(color = Color.White)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xffc1aeca))
-                    .padding(horizontal = 24.dp,
-                        vertical = 160.dp)
-            ) { AlignCenter1() }
-        }
         Box(
             modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 57.5.dp,
-                    y = 348.dp)
-                .requiredSize(size = 300.dp)
-                .background(color = Color.White.copy(alpha = 0.6f))
-                .border(border = BorderStroke(2.dp, Color.Black)))
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 57.dp,
-                    y = 348.dp)
-                .requiredWidth(width = 301.dp)
-                .requiredHeight(height = 345.dp)
+                .fillMaxSize()
+                .background(color = Color(0xffc1aeca))
         ) {
-            Spacer(
+            AlignCenter3(modifier = Modifier.align(Alignment.TopCenter).padding(top = 160.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.arrow_back),
+                contentDescription = "arrow_back",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 6.530029296875.dp,
-                        y = 6.dp)
-                    .requiredSize(size = 95.dp))
-            Spacer(
+                    .align(Alignment.TopStart)
+                    .padding(start = 48.dp, top = 57.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    }
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.menu),
+                contentDescription = "Menu",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 199.5.dp,
-                        y = 6.dp)
-                    .requiredSize(size = 95.dp)
-                    .rotate(degrees = -90f))
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 199.5.dp,
-                        y = 199.dp)
-                    .requiredSize(size = 95.dp)
-                    .rotate(degrees = -180f))
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 6.5.dp,
-                        y = 199.dp)
-                    .requiredSize(size = 95.dp)
-                    .rotate(degrees = 90f))
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 100.5.dp,
-                        y = 0.dp)
-                    .requiredSize(size = 100.dp))
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 200.5.dp,
-                        y = 100.dp)
-                    .requiredSize(size = 100.dp))
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 100.5.dp,
-                        y = 100.dp)
-                    .requiredSize(size = 100.dp)
-                    .border(border = BorderStroke(2.dp, Color.Black)))
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 0.dp,
-                        y = 100.dp)
-                    .requiredSize(size = 100.dp))
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 101.dp,
-                        y = 200.dp)
-                    .requiredSize(size = 100.dp))
-            Text(
-                text = "Player x Turn",
-                color = Color.Black,
-                textAlign = TextAlign.Center,
-                lineHeight = 6.em,
-                style = TextStyle(
-                    fontSize = 20.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 74.5.dp,
-                        y = 313.dp)
-                    .requiredWidth(width = 149.dp)
-                    .requiredHeight(height = 32.dp))
+                    .align(Alignment.TopEnd)
+                    .padding(end = 20.dp, top = 56.dp)
+                    .requiredWidth(width = 37.dp)
+                    .requiredHeight(height = 52.dp)
+                    .clickable { showMenu = !showMenu }
+            )
         }
-        Image(
-            painter = painterResource(id = R.drawable.menu),
-            contentDescription = "Menu",
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 355.dp,
-                    y = 67.dp)
-                .requiredWidth(width = 37.dp)
-                .requiredHeight(height = 52.dp))
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            TicTacToeBoard(
+                boardState = boardState,
+                onBoxClick = { index ->
+                    if (winner == null && boardState[index] == null) {
+                        boardState[index] = currentPlayer
+                        winner = checkForWinner(boardState)
+                        if (winner != null) {
+                            showWinnerDialog = true
+                        } else {
+                            currentPlayer = if (currentPlayer == "X") "O" else "X"
+                        }
+                    }
+                },
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+
+        if (winner != null) {
+            if (showWinnerDialog) {
+                Frame18(
+                    modifier = Modifier.align(Alignment.Center),
+                    onDismiss = {
+                        showWinnerDialog = false
+                        boardState.fill(null)
+                        winner = null
+                        currentPlayer = "X"
+                    },
+                    winnerId = winner ?: ""
+                )
+            }
+        }
+
+        if (showMenu) {
+            Frame17(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onGoToMenuClick = { navController.popBackStack() },
+                onGiveUpClick = {
+                    boardState.fill(null)
+                    winner = if (currentPlayer == "X") "O" else "X"
+                    showWinnerDialog = true
+                    showMenu = false
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun AlignCenter1(modifier: Modifier = Modifier) {
+fun AlignCenter3(modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -168,26 +138,210 @@ fun AlignCenter1(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = "Tic Tac Toe",
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            lineHeight = 2.5.em,
+            style = TextStyle(
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                shadow = Shadow(
+                    color = Color.Black.copy(alpha = 0.25f),
+                    offset = Offset(0f, 4f),
+                    blurRadius = 4f
+                )
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+        Text(
+            text = "Game Started",
             color = Color(0xff1e1e1e),
             textAlign = TextAlign.Center,
-            lineHeight = 3.75.em,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier
-                .fillMaxWidth())
-        Text(
-            text = "",
-            color = Color(0xff757575),
-            textAlign = TextAlign.Center,
-            lineHeight = 3.75.em,
-            style = MaterialTheme.typography.headlineLarge,
+            lineHeight = 5.em,
+            style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(align = Alignment.CenterVertically))
+                .wrapContentHeight(align = Alignment.CenterVertically)
+        )
     }
 }
+
+@Composable
+fun TicTacToeBoard(
+    boardState: List<String?>,
+    onBoxClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = modifier
+            .requiredSize(300.dp)
+            .background(Color.White.copy(alpha = 0.6f))
+            .border(border = BorderStroke(2.dp, Color.Black))
+    ) {
+        items(9) { index ->
+            Box(
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .border(BorderStroke(1.dp, Color.Black))
+                    .clickable { onBoxClick(index) }
+                    .padding(4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                when (boardState[index]) {
+                    "X" -> Text("X", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                    "O" -> Text("O", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                    else -> {}
+                }
+            }
+        }
+    }
+}
+
+fun checkForWinner(boardState: List<String?>): String? {
+    val winningCombinations = listOf(
+        listOf(0, 1, 2), listOf(3, 4, 5), listOf(6, 7, 8),
+        listOf(0, 3, 6), listOf(1, 4, 7), listOf(2, 5, 8),
+        listOf(0, 4, 8), listOf(2, 4, 6)
+    )
+
+    for (combination in winningCombinations) {
+        val (a, b, c) = combination
+        if (boardState[a] != null && boardState[a] == boardState[b] && boardState[a] == boardState[c]) {
+            return boardState[a]
+        }
+    }
+
+    if (boardState.all { it != null }) {
+        return "Draw"
+    }
+
+    return null
+}
+@Composable
+fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: String) {
+    Surface(
+        color = Color(0xffc1aeca),
+        border = BorderStroke(1.dp, Color.Black),
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .requiredWidth(width = 320.dp)
+                .requiredHeight(height = 627.dp)
+        ) {
+            Text(
+                text = "Player $winnerId won!",
+                color = Color.Black,
+                fontStyle = FontStyle.Italic,
+                textAlign = TextAlign.Center,
+                lineHeight = 1.06.em,
+                style = TextStyle(
+                    fontSize = 32.sp,
+                    letterSpacing = 0.1.sp
+                ),
+                modifier = Modifier
+                    .align(alignment = Alignment.TopStart)
+                    .offset(x = 70.dp, y = 120.dp)
+                    .requiredWidth(width = 197.dp)
+                    .requiredHeight(height = 119.dp)
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+            )
+            Button(
+                onClick = { onDismiss() },
+                shape = RoundedCornerShape(100.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff65558f)),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
+                modifier = Modifier
+                    .align(alignment = Alignment.TopStart)
+                    .offset(x = 108.dp, y = 253.dp)
+                    .requiredHeight(height = 40.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .requiredHeight(height = 40.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "Go to Menu",
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 1.43.em,
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier
+                                .wrapContentHeight(align = Alignment.CenterVertically)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Frame17(modifier: Modifier = Modifier, onGoToMenuClick: () -> Unit, onGiveUpClick: () -> Unit) {
+    val gridData = listOf(FrameItem("Go to Menu"), FrameItem("Give up"))
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+        horizontalArrangement = Arrangement.spacedBy(-109.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        content = {
+            items(gridData.size) { index ->
+                val textLabeltext = gridData[index].textLabeltext
+                Button(
+                    onClick = {
+                        when (index) {
+                            0 -> onGoToMenuClick()
+                            1 -> onGiveUpClick()
+                        }
+                    },
+                    shape = RoundedCornerShape(100.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff65558f)),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
+                    modifier = Modifier
+                        .width(200.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = textLabeltext,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 1.43.em,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            }
+        },
+        modifier = modifier
+            .requiredWidth(width = 412.dp)
+            .requiredHeight(height = 211.dp)
+            .background(color = Color(0xffe7e0ec))
+            .padding(16.dp)
+    )
+}
+
+data class FrameItem(val textLabeltext: String)
 
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun GameScreenPreview() {
-    GameScreen(Modifier)
+    val navController = rememberNavController()
+    GameScreen(navController = navController)
+}
+
+@Composable
+private fun Frame18Preview() {
+    Frame18(onDismiss = { }, winnerId = "X") // Korrigerad förhandsgranskning
+}
+
+@Preview(widthDp = 412, heightDp = 211)
+@Composable
+private fun Frame17Preview() {
+    Frame17(onGoToMenuClick = { }, onGiveUpClick = { })
 }

@@ -1,24 +1,19 @@
 package com.example.projecttictactoe.com.example.projecttictactoe
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,10 +32,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.example.projecttictactoe.R
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MenuScreen(modifier: Modifier = Modifier) {
+fun MenuScreen(navController: Modifier.Companion, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 412.dp)
@@ -51,56 +52,57 @@ fun MenuScreen(modifier: Modifier = Modifier) {
                 .requiredHeight(height = 917.dp)
                 .background(color = Color.White)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color(0xffc1aeca))
-                    .padding(horizontal = 24.dp,
-                        vertical = 160.dp)
             ) {
-                AlignCenter()
                 Column(
+                    verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .requiredWidth(width = 360.dp)
-                        .requiredHeight(height = 509.dp)
-                        .background(color = Color(0xfffef7ff))
+                        .requiredWidth(width = 412.dp)
+                        .requiredHeight(height = 917.dp)
+                        .padding(horizontal = 24.dp,
+                            vertical = 160.dp)
                 ) {
-                    repeat(9) {
-                        Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho()
-                    }
+                    Tab(
+                        selected = false,
+                        onClick = {  },
+                        text = {
+                            Text(
+                                text = "Game Requests ",
+                                color = Color(0xfff5f5f5),
+                                textAlign = TextAlign.Center,
+                                lineHeight = 3.16.em,
+                                style = TextStyle(
+                                    fontSize = 38.sp,
+                                    shadow = Shadow(color = Color.Black.copy(alpha = 0.4000000059604645f), offset = Offset(0f, 4f), blurRadius = 4f)))
+                        })
+                    Column(
+                        modifier = Modifier
+                            .requiredWidth(width = 360.dp)
+                            .requiredHeight(height = 509.dp)
+                            .background(color = Color(0xffe7e0ec))
+                    ) {
+                        repeat(8) {
+                            Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho()
+                        }
 
+                    }
                 }
+                Image(
+                    painter = painterResource(id = R.drawable.arrow_back),
+                    contentDescription = "arrow_back",
+                    colorFilter = ColorFilter.tint(Color(0xfff5eff7)),
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 48.dp,
+                            y = 57.dp)
+                        .requiredSize(size = 45.dp)
+                        .clip(shape = RoundedCornerShape(30.dp)))
             }
         }
-        Image(
-            painter = painterResource(id = R.drawable.menu),
-            contentDescription = "Menu",
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 355.dp,
-                    y = 67.dp)
-                .requiredWidth(width = 37.dp)
-                .requiredHeight(height = 52.dp))
-    }
-}
-
-@Composable
-fun AlignCenter(modifier: Modifier = Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Text(
-            text = "Game Requests ",
-            color = Color(0xff1e1e1e),
-            textAlign = TextAlign.Center,
-            lineHeight = 3.75.em,
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier
-                .fillMaxWidth())
     }
 }
 
@@ -164,7 +166,7 @@ fun BuildingBlocksMonogram(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredSize(size = 40.dp)
             .clip(shape = RoundedCornerShape(100.dp))
-            .background(color = Color(0xffeaddff))
+            .background(color = Color.White)
     ) {
         Text(
             text = "A",
@@ -213,7 +215,7 @@ fun TypeSelectedStateEnabled(modifier: Modifier = Modifier) {
                         checked = checkedState.value,
                         onCheckedChange = { checkedState.value = it })
                 }
-                Icon( //Small checkmark
+                Icon(
                     painter = painterResource(id = R.drawable.check_small),
                     contentDescription = "check_small",
                     tint = Color.White,

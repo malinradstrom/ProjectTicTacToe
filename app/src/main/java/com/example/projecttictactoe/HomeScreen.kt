@@ -1,5 +1,4 @@
 package com.example.projecttictactoe
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -110,7 +109,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                             .padding(all = 8.dp)
                                     ) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.cancelbutton),
+                                            painter = painterResource(id = R.drawable.cancel),
                                             contentDescription = "Icon",
                                             tint = Color(0xff49454f))
                                     }
@@ -155,11 +154,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             lineHeight = 6.25.em,
                             style = TextStyle(fontSize = 16.sp)
                         )
-                        }
                     }
                 }
             }
         }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -170,7 +169,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 .padding(20.dp) // Add padding for spacing
         )
     }
-    }
+}
 
 @Composable
 fun Menu(modifier: Modifier = Modifier) {

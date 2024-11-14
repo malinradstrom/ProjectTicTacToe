@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.projecttictactoe.com.example.projecttictactoe.GameScreen
 import com.example.projecttictactoe.com.example.projecttictactoe.MenuScreen
@@ -30,7 +32,7 @@ class MainActivity : ComponentActivity() {
 fun TicTacToeApp() {
     val navController = androidx.navigation.compose.rememberNavController()
 
-    androidx.navigation.compose.NavHost( // Anvand androidx.navigation.compose.NavHost
+    androidx.navigation.compose.NavHost( // Använd androidx.navigation.compose.NavHost
         navController = navController,
         startDestination = "HomeScreen"
     ) {
@@ -50,8 +52,8 @@ fun AppIcon1() {
 }
 
 @Composable
-fun GameScreen1(navController: androidx.navigation.NavController) {
-    GameScreen(Modifier)
+fun GameScreen1(navController: NavController) {
+    GameScreen(navController = navController as NavHostController)
 }
 
 @Composable
