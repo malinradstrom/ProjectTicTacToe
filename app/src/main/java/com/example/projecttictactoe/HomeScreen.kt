@@ -109,7 +109,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                             .padding(all = 8.dp)
                                     ) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.cancel),
+                                            painter = painterResource(id = R.drawable.cancelbutton),
                                             contentDescription = "Icon",
                                             tint = Color(0xff49454f))
                                     }
