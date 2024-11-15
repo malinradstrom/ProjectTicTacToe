@@ -2,7 +2,6 @@ package com.example.projecttictactoe
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -35,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -85,7 +82,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             text = "User Name:",
                             color = Color(0xff49454f),
                             lineHeight = 1.33.em,
-                            style = MaterialTheme.typography.bodySmall)
+                            style = TextStyle(fontSize = 18.sp)
+                        )
+
                     },
                     placeholder = { Text("Input") },
                     trailingIcon = {
@@ -121,8 +120,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     },
                     textStyle = MaterialTheme.typography.bodyLarge,
                     colors = OutlinedTextFieldDefaults.colors(
-                        Color(0xff1d1b20),
-                        Color(0xffe6e0e9)),
+                        focusedTextColor = Color(0xff1d1b20),
+                        focusedContainerColor = Color(0xffe6e0e9)),
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
                         .offset(x = 101.dp,
@@ -131,7 +130,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         .requiredHeight(height = 56.dp)
                         .clip(shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)))
                 OutlinedButton(
-                    onClick = { },
+                    onClick = { GameScreen() },
                     shape = RoundedCornerShape(18.dp), //round corners to start game button
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
                     contentPadding = PaddingValues(all = 12.dp),
@@ -154,46 +153,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             text = "Start Game",
                             color = Color(0xfff5f5f5),
                             lineHeight = 6.25.em,
-                            style = TextStyle(fontSize = 16.sp)
+                            style = TextStyle(fontSize = 22.sp)
                         )
                     }
                 }
             }
         }
     }
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.TopEnd // Align to top right
-    ) {
-        Quit(
-            modifier = Modifier
-                .padding(20.dp) // Add padding for spacing
-        )
-    }
 }
-
-@Composable
-fun Quit(modifier: Modifier = Modifier) {
-    IconButton(
-        onClick = {  },
-        modifier = modifier
-    ) {
-        Box(
-            modifier = Modifier
-                .requiredWidth(width = 37.dp)
-                .requiredHeight(height = 52.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.quit),
-                contentDescription = "Icon",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .border(border = BorderStroke(10.dp, Color.Transparent)))
-        }
-    }
-}
-
 
 @Composable
 fun AlignCenter(modifier: Modifier = Modifier) {
@@ -210,7 +177,7 @@ fun AlignCenter(modifier: Modifier = Modifier) {
                 fontSize = 72.sp,
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.SemiBold,
-                shadow = Shadow(color = Color.White, offset = Offset(0f, 6f), blurRadius = 8f)),
+                shadow = Shadow(color = Color.White, offset = Offset(0f, 10f), blurRadius = 14f)),
             modifier = Modifier
                 .fillMaxWidth())
     }

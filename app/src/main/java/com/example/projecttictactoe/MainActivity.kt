@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.example.projecttictactoe.GameScreen
-import com.example.projecttictactoe.MenuScreen
+import androidx.navigation.navOptions
 import com.example.projecttictactoe.ui.theme.ProjectTicTacToeTheme
 
 
@@ -37,19 +36,12 @@ fun TicTacToeApp() {
         startDestination = "HomeScreen"
     ) {
         composable("HomeScreen") { HomeScreen1(navController) }
-        composable("menuScreen") { MenuScreen1(navController) }
-        composable("appIcon") { AppIcon1() }
-        composable("gameScreen") { GameScreen1(navController) }
+        composable("MenuScreen") { MenuScreen1(navController) }
+        composable("GameScreen") { GameScreen1(navController) }
     }
 }
 
-fun composable(string: String, function: @Composable () -> Unit) {}
-
 @SuppressLint("NewApi")
-@Composable
-fun AppIcon1() {
-    AppIcon(Modifier)
-}
 
 @Composable
 fun GameScreen1(navController: NavController) {
