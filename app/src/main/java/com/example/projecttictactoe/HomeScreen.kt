@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -165,7 +166,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             .fillMaxSize(),
         contentAlignment = Alignment.TopEnd // Align to top right
     ) {
-        Menu(
+        Quit(
             modifier = Modifier
                 .padding(20.dp) // Add padding for spacing
         )
@@ -173,12 +174,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Menu(modifier: Modifier = Modifier) {
+fun Quit(modifier: Modifier = Modifier) {
     IconButton(
-        onClick = { },
+        onClick = {  },
         modifier = modifier
-            .size(48.dp)
-            .clip(RectangleShape)
     ) {
         Box(
             modifier = Modifier
@@ -186,7 +185,7 @@ fun Menu(modifier: Modifier = Modifier) {
                 .requiredHeight(height = 52.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.menu),
+                painter = painterResource(id = R.drawable.quit),
                 contentDescription = "Icon",
                 modifier = Modifier
                     .fillMaxSize()
@@ -209,6 +208,7 @@ fun AlignCenter(modifier: Modifier = Modifier) {
             lineHeight = 1.67.em,
             style = TextStyle(
                 fontSize = 72.sp,
+                fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.SemiBold,
                 shadow = Shadow(color = Color.White, offset = Offset(0f, 6f), blurRadius = 8f)),
             modifier = Modifier

@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,6 +76,7 @@ fun MenuScreen(navController: Modifier.Companion, modifier: Modifier = Modifier)
                                 textAlign = TextAlign.Center,
                                 lineHeight = 3.16.em,
                                 style = TextStyle(
+                                    fontStyle = FontStyle.Italic,
                                     fontSize = 38.sp,
                                     shadow = Shadow(color = Color.Black.copy(alpha = 0.4000000059604645f), offset = Offset(0f, 4f), blurRadius = 4f)))
                         })

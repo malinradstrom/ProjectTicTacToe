@@ -219,7 +219,7 @@ fun checkForWinner(boardState: List<String?>): String? {
 @Composable
 fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: String) {
     Surface(
-        color = Color(0xffc1aeca),
+        color = Color(0xffe7e0ec),
         border = BorderStroke(1.dp, Color.Black),
         modifier = modifier
     ) {
