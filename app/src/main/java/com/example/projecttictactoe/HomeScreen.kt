@@ -2,27 +2,22 @@ package com.example.projecttictactoe
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,157 +29,122 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    var userName by remember { mutableStateOf("") }
+fun HomeScreen(navController: NavController,modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
+            .clip(shape = RoundedCornerShape(30.dp))
+            .background(color = Color(0xffc1aeca))
     ) {
-        Column(
-            modifier = Modifier
-                .requiredWidth(width = 412.dp)
-                .requiredHeight(height = 917.dp)
-                .background(color = Color.White)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xffc1aeca))
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .requiredWidth(width = 412.dp)
-                        .requiredHeight(height = 917.dp)
-                        .padding(horizontal = 24.dp,
-                            vertical = 160.dp)
-                ) {
-                    AlignCenter()
-                }
-                TextField(
-                    value = userName,
-                    onValueChange = {newText: String -> userName = newText},
-                    label = {
-                        Text(
-                            text = "User Name:",
-                            color = Color(0xff49454f),
-                            lineHeight = 1.33.em,
-                            style = TextStyle(fontSize = 18.sp)
-                        )
+        Title()
+        StartGameButton(navController)
+        TextareaField()
+    }
+}
 
-                    },
-                    placeholder = { Text("Input") },
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .requiredSize(size = 48.dp)
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .clip(shape = RoundedCornerShape(1.dp))
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier
-                                            .padding(all = 8.dp)
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.cancelbutton),
-                                            contentDescription = "Icon",
-                                            tint = Color(0xff49454f))
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color(0xff1d1b20),
-                        focusedContainerColor = Color(0xffe6e0e9)),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 101.dp,
-                            y = 430.dp)
-                        .requiredWidth(width = 210.dp)
-                        .requiredHeight(height = 56.dp)
-                        .clip(shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)))
-                OutlinedButton(
-                    onClick = { GameScreen() },
-                    shape = RoundedCornerShape(18.dp), //round corners to start game button
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
-                    contentPadding = PaddingValues(all = 12.dp),
-                    border = BorderStroke(1.dp, Color(0xff2c2c2c)),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 112.dp,
-                            y = 602.dp)
-                        .requiredWidth(width = 188.dp)
-                        .requiredHeight(height = 78.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .requiredWidth(width = 188.dp)
-                            .requiredHeight(height = 78.dp)
-                    ) {
-                        Text(
-                            text = "Start Game",
-                            color = Color(0xfff5f5f5),
-                            lineHeight = 6.25.em,
-                            style = TextStyle(fontSize = 22.sp)
-                        )
-                    }
-                }
-            }
+@Composable
+fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) {
+    OutlinedButton(
+        onClick = { navController.navigate("menu") },
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
+        contentPadding = PaddingValues(all = 12.dp),
+        border = BorderStroke(1.dp, Color(0xff2c2c2c)),
+        modifier = modifier
+            .offset(x = 112.dp,
+                y = 591.dp)
+            .requiredWidth(width = 188.dp)
+            .requiredHeight(height = 78.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp,
+                Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .requiredWidth(width = 188.dp)
+                .requiredHeight(height = 78.dp)
+        ) {
+            Text(
+                text = "Start Game",
+                color = Color(0xfff5f5f5),
+                lineHeight = 6.25.em,
+                style = TextStyle(
+                    fontSize = 16.sp))
         }
     }
 }
 
 @Composable
-fun AlignCenter(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = modifier
-    ) {
+fun TextareaField(modifier: Modifier = Modifier) {
+    Box(modifier) {
+        var userName by remember { mutableStateOf("") }
         Text(
-            text = "Tic Tac Toe",
+            text = "User Name:",
             color = Color(0xff1e1e1e),
-            textAlign = TextAlign.Center,
-            lineHeight = 1.67.em,
-            style = TextStyle(
-                fontSize = 72.sp,
-                fontStyle = FontStyle.Italic,
-                fontWeight = FontWeight.SemiBold,
-                shadow = Shadow(color = Color.White, offset = Offset(0f, 10f), blurRadius = 14f)),
+            lineHeight = 8.75.em,
+            style = TextStyle(fontSize = 16.sp),
             modifier = Modifier
+                .offset(x = 105.dp,
+                    y = 403.dp)
                 .fillMaxWidth())
+        OutlinedTextField(
+            value = userName,
+            onValueChange = {newText: String -> userName = newText},
+            label = {
+                Text(
+                    text = "Input",
+                    color = Color(0xff1e1e1e),
+                    lineHeight = 8.75.em,
+                    style = TextStyle(
+                        fontSize = 16.sp))
+            },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White),
+            modifier = Modifier
+                .offset(x = 105.dp,
+                    y = 403.dp)
+                .requiredWidth(width = 210.dp)
+                .border(border = BorderStroke(1.dp, Color(0xffd9d9d9)),
+                    shape = RoundedCornerShape(8.dp))
+                .padding(horizontal = 16.dp,
+                    vertical = 12.dp))
     }
+}
+
+@Composable
+fun Title(modifier: Modifier = Modifier) {
+    Text(
+        text = "Tic Tac Toe",
+        color = Color(0xff1e1e1e),
+        textAlign = TextAlign.Center,
+        lineHeight = 1.67.em,
+        style = TextStyle(
+            fontSize = 72.sp,
+            fontWeight = FontWeight.Bold,
+            shadow = Shadow(color = Color.White,
+                offset = Offset(0f, 4f),
+                blurRadius = 4f)),
+        modifier = modifier
+            .offset(x=24.dp, y = 99.dp)
+            .requiredWidth(width = 364.dp))
 }
 
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(Modifier)
+    // Use rememberNavController to create a valid NavController instance
+    val navController = rememberNavController()
+    HomeScreen(navController = navController, modifier = Modifier)
 }

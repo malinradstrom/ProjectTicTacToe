@@ -1,46 +1,49 @@
 package com.example.projecttictactoe
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navOptions
-import com.example.projecttictactoe.ui.theme.ProjectTicTacToeTheme
-
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            ProjectTicTacToeTheme {
-                TicTacToeApp()
-            }
+            AppNavigation()
         }
     }
 }
 
 @Composable
-fun TicTacToeApp() {
-    val navController = androidx.navigation.compose.rememberNavController()
+fun AppNavigation() {
+    val navController = rememberNavController()
 
-    androidx.navigation.compose.NavHost( // Använd androidx.navigation.compose.NavHost
+    NavHost(
         navController = navController,
         startDestination = "HomeScreen"
     ) {
-        composable("HomeScreen") { HomeScreen1(navController) }
-        composable("MenuScreen") { MenuScreen1(navController) }
-        composable("GameScreen") { GameScreen1(navController) }
+        composable("HomeScreen") {
+            HomeScreen(
+                onNavigateToGame = { navController.navigate("GameScreen") },
+                onNavigateToMenu = { navController.navigate("MenuScreen") }
+            )
+        }
+        composable("GameScreen") {
+            GameScreen(
+                onNavigateBack = { navController.popBackStack("HomeScreen", inclusive = false) }
+            )
+        }
+        composable("MenuScreen") {
+            MenuScreen(
+                onNavigateBack = { navController.popBackStack("HomeScreen", inclusive = false) }
+            )
+        }
     }
 }
-
+/*
 @SuppressLint("NewApi")
 
 @Composable
@@ -49,11 +52,12 @@ fun GameScreen1(navController: NavController) {
 }
 
 @Composable
-fun MenuScreen1(navController: androidx.navigation.NavController) {
+fun MenuScreen1(navController: NavController) {
     MenuScreen(Modifier)
 }
 
 @Composable
-fun HomeScreen1(navController: androidx.navigation.NavController) {
-    HomeScreen(Modifier)
+fun HomeScreen1(navController: NavController) {
+    HomeScreen(navController)
 }
+*/

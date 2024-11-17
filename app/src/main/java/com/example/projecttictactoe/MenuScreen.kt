@@ -95,7 +95,7 @@ fun MenuScreen(navController: Modifier.Companion, modifier: Modifier = Modifier)
                 Image(
                     painter = painterResource(id = R.drawable.arrow_back),
                     contentDescription = "arrow_back",
-                    colorFilter = ColorFilter.tint(Color(0xfff5eff7)),
+                    colorFilter = ColorFilter.tint(Color(0x11F5EFF7)),
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
                         .offset(x = 48.dp,
