@@ -58,12 +58,13 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
 
             Image(
                 painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "arrow_back",
+                contentDescription = "arrow_back_cancel_game",
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(start = 48.dp, top = 57.dp)
                     .clickable {
-                        navController.popBackStack()
+                        winner = if (currentPlayer == "X") "O" else "X"
+                        showWinnerDialog = true
                     }
             )
         }
@@ -96,6 +97,7 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
                         boardState.fill(null)
                         winner = null
                         currentPlayer = "X"
+                        navController.navigate("MenuScreen")
                     },
                     winnerId = winner ?: ""
                 )
