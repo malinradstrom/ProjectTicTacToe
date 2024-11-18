@@ -1,11 +1,14 @@
 package com.example.projecttictactoe
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
@@ -16,17 +19,13 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -37,97 +36,104 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MenuScreen(navController: Modifier.Companion, modifier: Modifier = Modifier) {
+fun MenuScreen(navController: NavController, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
-            .clip(shape = RoundedCornerShape(30.dp))
+            .background(color = Color(0xffc1aeca))
     ) {
-        Column(
+        Text(
+            text = "Game Requests",
+            color = Color(0xfff5f5f5),
+            fontStyle = FontStyle.Italic,
+            textAlign = TextAlign.Center,
+            lineHeight = 3.16.em,
+            style = TextStyle(
+                fontSize = 38.sp,
+                fontWeight = FontWeight.Light,
+                shadow = Shadow(color = Color.Black.copy(alpha = 0.4000000059604645f),
+                    offset = Offset(0f, 4f),
+                    blurRadius = 4f)),
             modifier = Modifier
-                .requiredWidth(width = 412.dp)
-                .requiredHeight(height = 917.dp)
-                .background(color = Color.White)
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 24.dp,
+                    y = 147.dp)
+                .requiredWidth(width = 364.dp))
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 49.dp,
+                    y = 54.dp)
+                .clip(shape = RoundedCornerShape(30.dp))
+                .background(color = Color(0xff65558f))
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xffc1aeca))
+                    .requiredSize(size = 45.dp)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .requiredWidth(width = 412.dp)
-                        .requiredHeight(height = 917.dp)
-                        .padding(horizontal = 24.dp,
-                            vertical = 160.dp)
-                ) {
-                    Tab(
-                        selected = false,
-                        onClick = {  },
-                        text = {
-                            Text(
-                                text = "Game Requests ",
-                                color = Color(0xfff5f5f5),
-                                textAlign = TextAlign.Center,
-                                lineHeight = 3.16.em,
-                                style = TextStyle(
-                                    fontStyle = FontStyle.Italic,
-                                    fontSize = 38.sp,
-                                    shadow = Shadow(color = Color.Black.copy(alpha = 0.4000000059604645f), offset = Offset(0f, 4f), blurRadius = 4f)))
-                        })
-                    Column(
-                        modifier = Modifier
-                            .requiredWidth(width = 360.dp)
-                            .requiredHeight(height = 509.dp)
-                            .background(color = Color(0xffe7e0ec))
-                    ) {
-                        repeat(8) {
-                            Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho()
-                        }
-
-                    }
-                }
                 Image(
                     painter = painterResource(id = R.drawable.arrow_back),
-                    contentDescription = "arrow_back",
-                    colorFilter = ColorFilter.tint(Color(0x11F5EFF7)),
+                    contentDescription = "icon",
                     modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 48.dp,
-                            y = 57.dp)
-                        .requiredSize(size = 45.dp)
-                        .clip(shape = RoundedCornerShape(30.dp)))
+                        .fillMaxSize())
             }
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 59.dp,
+                    y = 230.dp)
+                .requiredWidth(width = 294.dp)
+                .requiredHeight(height = 574.dp)
+        ) {
+            List2Density(navController = navController)
         }
     }
 }
 
 @Composable
-fun Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(modifier: Modifier = Modifier) {
+fun List2Density(navController: NavController,modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .requiredWidth(width = 294.dp)
+            .requiredHeight(height = 575.dp)
+            .background(color = Color(0xfffef7ff))
+    ) {
+        repeat(12) { //List connected to the fire base
+            Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(navController = navController)
+        }
+
+    }
+}
+
+@Composable
+fun Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(
+    navController: NavController, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .requiredHeight(height = 56.dp)
+            .requiredHeight(height = 48.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .requiredWidth(width = 360.dp)
+                .requiredWidth(width = 294.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .requiredHeight(height = 56.dp)
+                    .requiredHeight(height = 48.dp)
                     .padding(horizontal = 16.dp,
-                        vertical = 8.dp)
+                        vertical = 4.dp)
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center
@@ -153,7 +159,7 @@ fun Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(modifier: 
                     horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TypeSelectedStateEnabled()
+                    TypeSelectedStateEnabled(navController = navController)
                 }
             }
         }
@@ -167,7 +173,7 @@ fun BuildingBlocksMonogram(modifier: Modifier = Modifier) {
         modifier = modifier
             .requiredSize(size = 40.dp)
             .clip(shape = RoundedCornerShape(100.dp))
-            .background(color = Color.White)
+            .background(color = Color(0xffeaddff))
     ) {
         Text(
             text = "A",
@@ -188,17 +194,19 @@ fun BuildingBlocksMonogram(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TypeSelectedStateEnabled(modifier: Modifier = Modifier) {
+fun TypeSelectedStateEnabled(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .padding(end = 4.dp,
-                top = 4.dp,
-                bottom = 4.dp)
+            .padding(end = 4.dp, top = 4.dp, bottom = 4.dp)
     ) {
+        // Wrapping the Checkbox with an IconButton that triggers navigation
         IconButton(
-            onClick = { },
+            onClick = {
+                // Navigate to the game screen when the checkbox is clicked
+                navController.navigate("GameScreen")
+            },
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(100.dp))
         ) {
@@ -211,19 +219,20 @@ fun TypeSelectedStateEnabled(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .padding(all = 11.dp)
                 ) {
-                    val checkedState = remember { mutableStateOf(true) }
+                    // Checkbox is displayed as checked but not interactable
                     Checkbox(
-                        checked = checkedState.value,
-                        onCheckedChange = { checkedState.value = it })
+                        checked = true,  // Always display as checked
+                        onCheckedChange = null  // Disable interaction
+                    )
                 }
                 Icon(
                     painter = painterResource(id = R.drawable.check_small),
                     contentDescription = "check_small",
-                    tint = Color.White,
+                    tint = Color.Transparent,
                     modifier = Modifier
                         .align(alignment = Alignment.Center)
-                        .offset(x = 0.dp,
-                            y = 0.dp))
+                        .offset(x = 0.dp, y = 0.dp)
+                )
             }
         }
     }
@@ -239,5 +248,6 @@ fun BuildingBlocksstatelayer1Enabled(modifier: Modifier = Modifier) {
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun MenuScreenPreview() {
-    MenuScreen(Modifier)
+    val navController = rememberNavController()
+    MenuScreen(navController, Modifier)
 }

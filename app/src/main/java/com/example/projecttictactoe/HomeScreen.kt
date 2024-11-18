@@ -40,7 +40,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeScreen(navController: NavController,modifier: Modifier = Modifier) {
+fun HomeScreen(navController: NavController,
+               //homeScreen: MutableList<TicTacToe>,
+               modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 412.dp)
@@ -49,7 +51,7 @@ fun HomeScreen(navController: NavController,modifier: Modifier = Modifier) {
             .background(color = Color(0xffc1aeca))
     ) {
         Title()
-        StartGameButton(navController)
+        StartGameButton(navController, Modifier)
         TextareaField()
     }
 }
@@ -57,7 +59,7 @@ fun HomeScreen(navController: NavController,modifier: Modifier = Modifier) {
 @Composable
 fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) {
     OutlinedButton(
-        onClick = { navController.navigate("menu") },
+        onClick = { navController.navigate("MenuScreen") },
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
         contentPadding = PaddingValues(all = 12.dp),
@@ -144,7 +146,6 @@ fun Title(modifier: Modifier = Modifier) {
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun HomeScreenPreview() {
-    // Use rememberNavController to create a valid NavController instance
     val navController = rememberNavController()
     HomeScreen(navController = navController, modifier = Modifier)
 }
