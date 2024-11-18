@@ -3,16 +3,18 @@ package com.example.projecttictactoe
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,13 +42,18 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import kotlin.String
 
 @Composable
-fun HomeScreen(navController: NavController,
-               //homeScreen: MutableList<TicTacToe>,
-               modifier: Modifier = Modifier) {
+fun HomeScreen(
+    navController: NavController,
+    tictactoeList: MutableList<String>,
+) {
+    var userName by remember { mutableStateOf("") }
+    var isEditing by remember { mutableStateOf(true) }
+
     Box(
-        modifier = modifier
+        modifier = Modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
             .clip(shape = RoundedCornerShape(30.dp))
@@ -52,9 +61,27 @@ fun HomeScreen(navController: NavController,
     ) {
         Title()
         StartGameButton(navController, Modifier)
-        TextareaField()
+        UsernameInputField(
+            userName = userName,
+            onUserNameChange = { newName ->
+                if (newName.length <= 20 && newName.all { it.isLetterOrDigit() }) {
+                    userName = newName
+                }
+            },
+            onUserNameSave = {
+                if (userName.isNotBlank()) {
+                    tictactoeList.add(userName) // Save username to the list
+                    isEditing = false // Exit editing mode after saving
+                }
+            },
+            isEditing = isEditing,
+            modifier = Modifier
+                .offset(x = 20.dp, y = 0.dp)
+                .requiredWidth(210.dp)
+        )
     }
 }
+
 
 @Composable
 fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) {
@@ -89,39 +116,59 @@ fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun TextareaField(modifier: Modifier = Modifier) {
+fun UsernameInputField(userName: String,
+                       onUserNameChange: (String) -> Unit,
+                       onUserNameSave: () -> Unit,
+                       isEditing: Boolean,
+                       modifier: Modifier = Modifier) {
+    // State variables to hold the username and edit mode
     Box(modifier) {
-        var userName by remember { mutableStateOf("") }
-        Text(
-            text = "User Name:",
-            color = Color(0xff1e1e1e),
-            lineHeight = 8.75.em,
-            style = TextStyle(fontSize = 16.sp),
-            modifier = Modifier
-                .offset(x = 105.dp,
-                    y = 403.dp)
-                .fillMaxWidth())
-        OutlinedTextField(
-            value = userName,
-            onValueChange = {newText: String -> userName = newText},
-            label = {
-                Text(
-                    text = "Input",
-                    color = Color(0xff1e1e1e),
-                    lineHeight = 8.75.em,
-                    style = TextStyle(
-                        fontSize = 16.sp))
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White),
-            modifier = Modifier
-                .offset(x = 105.dp,
-                    y = 403.dp)
-                .requiredWidth(width = 210.dp)
-                .border(border = BorderStroke(1.dp, Color(0xffd9d9d9)),
-                    shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 16.dp,
-                    vertical = 12.dp))
+        if (isEditing) {
+            OutlinedTextField(
+                value = userName,
+                onValueChange = onUserNameChange,
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    onUserNameSave() // Save username on Enter key press
+                }),
+                placeholder = {
+                    Text(
+                        text = "Enter Username",
+                        color = Color.Gray,
+                        fontSize = 8.sp,
+                        textAlign = TextAlign.Center
+                    )
+                },
+                modifier = Modifier
+                    .border(width = 1.dp, color = Color.Gray)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .offset(x = 85.dp,
+                        y = 403.dp)
+                    .requiredWidth(width = 210.dp)
+            )
+        } else {
+            // Display the saved username when not in editing mode
+            Text(
+                text = userName.ifEmpty { "Enter Username" },
+                color = Color.Black,
+                fontSize = 28.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .border(width = 1.dp, color = Color.Gray)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .offset(x = 85.dp,
+                        y = 403.dp)
+                    .requiredWidth(width = 210.dp)
+                    .clickable { onUserNameSave() } // Re-enter editing mode when tapped
+            )
+        }
     }
 }
 
@@ -147,5 +194,7 @@ fun Title(modifier: Modifier = Modifier) {
 @Composable
 private fun HomeScreenPreview() {
     val navController = rememberNavController()
-    HomeScreen(navController = navController, modifier = Modifier)
+    val tictactoeList = remember { mutableStateListOf<String>() }
+
+    HomeScreen(navController = navController, tictactoeList = tictactoeList)
 }

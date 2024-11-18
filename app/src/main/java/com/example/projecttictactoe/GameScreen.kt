@@ -36,15 +36,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
+
+//Make a tictactoeList username function that types out
+// "$username 's turn" at the bottom of the page connected
+// to the OS
+
 @Composable
-fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun GameScreen(navController: NavController, tictactoeList: MutableList<String>,
+) {
     var currentPlayer by remember { mutableStateOf("X") }
     val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
     var winner by remember { mutableStateOf<String?>(null) }
     var showWinnerDialog by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
             .clip(shape = RoundedCornerShape(30.dp))
@@ -58,12 +64,13 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
 
             Image(
                 painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "arrow_back",
+                contentDescription = "arrow_back_cancel_game",
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(start = 48.dp, top = 57.dp)
                     .clickable {
-                        navController.popBackStack()
+                        winner = if (currentPlayer == "X") "O" else "X"
+                        showWinnerDialog = true
                     }
             )
         }
@@ -96,6 +103,7 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
                         boardState.fill(null)
                         winner = null
                         currentPlayer = "X"
+                        navController.navigate("MenuScreen")
                     },
                     winnerId = winner ?: ""
                 )
@@ -270,7 +278,9 @@ fun Frame18(navController: NavController,
 @Composable
 private fun GameScreenPreview() {
     val navController = rememberNavController()
-    GameScreen(navController = navController)
+    val tictactoeList = remember { mutableStateListOf<String>() }
+
+    GameScreen(navController = navController, tictactoeList = tictactoeList)
 }
 
 @Composable

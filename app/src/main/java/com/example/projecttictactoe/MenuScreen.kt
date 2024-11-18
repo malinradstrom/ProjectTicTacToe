@@ -21,6 +21,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,19 +42,21 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MenuScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun MenuScreen(navController: NavController, tictactoeList: MutableList<String>) {
+    val userName = tictactoeList.lastOrNull() ?: "Player"
+
     Box(
-        modifier = modifier
+        modifier = Modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
             .background(color = Color(0xffc1aeca))
     ) {
         Text(
-            text = "Game Requests",
+            text = "Game Requests $userName",
             color = Color(0xfff5f5f5),
             fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center,
-            lineHeight = 3.16.em,
+            lineHeight = 1.66.em,
             style = TextStyle(
                 fontSize = 38.sp,
                 fontWeight = FontWeight.Light,
@@ -65,7 +69,7 @@ fun MenuScreen(navController: NavController, modifier: Modifier = Modifier) {
                     y = 147.dp)
                 .requiredWidth(width = 364.dp))
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { navController.navigate("HomeScreen") },
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
                 .offset(x = 49.dp,
@@ -88,7 +92,7 @@ fun MenuScreen(navController: NavController, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
                 .offset(x = 59.dp,
-                    y = 230.dp)
+                    y = 320.dp)
                 .requiredWidth(width = 294.dp)
                 .requiredHeight(height = 574.dp)
         ) {
@@ -102,10 +106,10 @@ fun List2Density(navController: NavController,modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .requiredWidth(width = 294.dp)
-            .requiredHeight(height = 575.dp)
+            .requiredHeight(height = 389.dp)
             .background(color = Color(0xfffef7ff))
     ) {
-        repeat(12) { //List connected to the fire base
+        repeat(8) { //List connected to the fire base
             Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(navController = navController)
         }
 
@@ -147,7 +151,7 @@ fun Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(
                         .weight(weight = 1f)
                 ) {
                     Text(
-                        text = "List item",
+                        text = "Username",
                         color = Color(0xff1d1b20),
                         lineHeight = 1.5.em,
                         style = MaterialTheme.typography.bodyLarge,
@@ -181,7 +185,7 @@ fun BuildingBlocksMonogram(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
             lineHeight = 1.5.em,
             style = TextStyle(
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 0.15.sp),
             modifier = Modifier
@@ -249,5 +253,6 @@ fun BuildingBlocksstatelayer1Enabled(modifier: Modifier = Modifier) {
 @Composable
 private fun MenuScreenPreview() {
     val navController = rememberNavController()
-    MenuScreen(navController, Modifier)
+    val tictactoeList = remember { mutableStateListOf("SampleUser") }
+    MenuScreen(navController = navController, tictactoeList = tictactoeList)
 }
