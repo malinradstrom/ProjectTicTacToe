@@ -42,7 +42,6 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
     val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
     var winner by remember { mutableStateOf<String?>(null) }
     var showWinnerDialog by remember { mutableStateOf(false) }
-    var showMenu by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -67,17 +66,6 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
                         navController.popBackStack()
                     }
             )
-
-            Image(
-                painter = painterResource(id = R.drawable.menu),
-                contentDescription = "Menu",
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 20.dp, top = 56.dp)
-                    .requiredWidth(width = 37.dp)
-                    .requiredHeight(height = 52.dp)
-                    .clickable { showMenu = !showMenu }
-            )
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -101,6 +89,7 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
         if (winner != null) {
             if (showWinnerDialog) {
                 Frame18(
+                    navController = navController,
                     modifier = Modifier.align(Alignment.Center),
                     onDismiss = {
                         showWinnerDialog = false
@@ -111,19 +100,6 @@ fun GameScreen(navController: NavController, modifier: Modifier = Modifier) {
                     winnerId = winner ?: ""
                 )
             }
-        }
-
-        if (showMenu) {
-            Frame17(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                onGoToMenuClick = { navController.popBackStack() },
-                onGiveUpClick = {
-                    boardState.fill(null)
-                    winner = if (currentPlayer == "X") "O" else "X"
-                    showWinnerDialog = true
-                    showMenu = false
-                }
-            )
         }
     }
 }
@@ -205,7 +181,9 @@ fun checkForWinner(boardState: List<String?>): String? {
 
     for (combination in winningCombinations) {
         val (a, b, c) = combination
-        if (boardState[a] != null && boardState[a] == boardState[b] && boardState[a] == boardState[c]) {
+        if (boardState[a] != null &&
+            boardState[a] == boardState[b] &&
+            boardState[a] == boardState[c]) {
             return boardState[a]
         }
     }
@@ -217,7 +195,10 @@ fun checkForWinner(boardState: List<String?>): String? {
     return null
 }
 @Composable
-fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: String) {
+fun Frame18(navController: NavController,
+            modifier: Modifier = Modifier,
+            onDismiss: () -> Unit,
+            winnerId: String) {
     Surface(
         color = Color(0xffe7e0ec),
         border = BorderStroke(1.dp, Color.Black),
@@ -228,8 +209,9 @@ fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: Stri
                 .requiredWidth(width = 320.dp)
                 .requiredHeight(height = 627.dp)
         ) {
+            val displayText = if (winnerId == "Draw") "It was a Draw" else "Player $winnerId won!"
             Text(
-                text = "Player $winnerId won!",
+                text = displayText,
                 color = Color.Black,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center,
@@ -246,7 +228,7 @@ fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: Stri
                     .wrapContentHeight(align = Alignment.CenterVertically)
             )
             Button(
-                onClick = { onDismiss() },
+                onClick = { onDismiss(); navController.navigate("MenuScreen")},
                 shape = RoundedCornerShape(100.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xff65558f)),
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
@@ -284,50 +266,6 @@ fun Frame18(modifier: Modifier = Modifier, onDismiss: () -> Unit, winnerId: Stri
     }
 }
 
-@Composable
-fun Frame17(modifier: Modifier = Modifier, onGoToMenuClick: () -> Unit, onGiveUpClick: () -> Unit) {
-    val gridData = listOf(FrameItem("Go to Menu"), FrameItem("Give up"))
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        horizontalArrangement = Arrangement.spacedBy(-109.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        content = {
-            items(gridData.size) { index ->
-                val textLabeltext = gridData[index].textLabeltext
-                Button(
-                    onClick = {
-                        when (index) {
-                            0 -> onGoToMenuClick()
-                            1 -> onGiveUpClick()
-                        }
-                    },
-                    shape = RoundedCornerShape(100.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff65558f)),
-                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
-                    modifier = Modifier
-                        .width(200.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = textLabeltext,
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 1.43.em,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-            }
-        },
-        modifier = modifier
-            .requiredWidth(width = 412.dp)
-            .requiredHeight(height = 211.dp)
-            .background(color = Color(0xffe7e0ec))
-            .padding(16.dp)
-    )
-}
-
-data class FrameItem(val textLabeltext: String)
-
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun GameScreenPreview() {
@@ -337,11 +275,6 @@ private fun GameScreenPreview() {
 
 @Composable
 private fun Frame18Preview() {
-    Frame18(onDismiss = { }, winnerId = "X") // Korrigerad förhandsgranskning
-}
-
-@Preview(widthDp = 412, heightDp = 211)
-@Composable
-private fun Frame17Preview() {
-    Frame17(onGoToMenuClick = { }, onGiveUpClick = { })
+    val navController = rememberNavController()
+    Frame18(navController = navController, onDismiss = { }, winnerId = "X") // Korrigerad förhandsgranskning
 }
