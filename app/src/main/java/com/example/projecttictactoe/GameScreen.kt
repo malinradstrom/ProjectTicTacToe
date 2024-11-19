@@ -128,8 +128,8 @@ fun AlignCenter3(modifier: Modifier = Modifier) {
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 shadow = Shadow(
-                    color = Color.Black.copy(alpha = 0.25f),
-                    offset = Offset(0f, 4f),
+                    color = Color.Black,
+                    offset = Offset(4f, 8f),
                     blurRadius = 4f
                 )
             ),

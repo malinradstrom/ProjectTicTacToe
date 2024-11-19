@@ -33,6 +33,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -90,12 +91,14 @@ fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) 
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
         contentPadding = PaddingValues(all = 12.dp),
-        border = BorderStroke(1.dp, Color(0xff2c2c2c)),
+        border = BorderStroke(1.dp, Color(0xff2c2c2c)
+        ),
         modifier = modifier
             .offset(x = 112.dp,
                 y = 591.dp)
             .requiredWidth(width = 188.dp)
             .requiredHeight(height = 78.dp)
+
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp,
@@ -110,7 +113,7 @@ fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) 
                 color = Color(0xfff5f5f5),
                 lineHeight = 6.25.em,
                 style = TextStyle(
-                    fontSize = 16.sp))
+                    fontSize = 24.sp))
         }
     }
 }
@@ -142,7 +145,7 @@ fun UsernameInputField(userName: String,
                     Text(
                         text = "Enter Username",
                         color = Color.Gray,
-                        fontSize = 8.sp,
+                        fontSize = 18.sp,
                         textAlign = TextAlign.Center
                     )
                 },
@@ -179,11 +182,12 @@ fun Title(modifier: Modifier = Modifier) {
         color = Color(0xff1e1e1e),
         textAlign = TextAlign.Center,
         lineHeight = 1.67.em,
+        fontStyle = FontStyle.Italic,
         style = TextStyle(
-            fontSize = 72.sp,
+            fontSize = 78.sp,
             fontWeight = FontWeight.Bold,
             shadow = Shadow(color = Color.White,
-                offset = Offset(0f, 4f),
+                offset = Offset(6f, 10f),
                 blurRadius = 4f)),
         modifier = modifier
             .offset(x=24.dp, y = 99.dp)

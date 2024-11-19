@@ -60,8 +60,8 @@ fun MenuScreen(navController: NavController, tictactoeList: MutableList<String>)
             style = TextStyle(
                 fontSize = 38.sp,
                 fontWeight = FontWeight.Light,
-                shadow = Shadow(color = Color.Black.copy(alpha = 0.4000000059604645f),
-                    offset = Offset(0f, 4f),
+                shadow = Shadow(color = Color.DarkGray,
+                    offset = Offset(4f, 6f),
                     blurRadius = 4f)),
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
