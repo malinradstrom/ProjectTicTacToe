@@ -52,7 +52,7 @@ fun MenuScreen(navController: NavController, tictactoeList: MutableList<String>)
             .background(color = Color(0xffc1aeca))
     ) {
         Text(
-            text = "Game Requests $userName",
+            text = "Game Requests \n$userName",
             color = Color(0xfff5f5f5),
             fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center,
