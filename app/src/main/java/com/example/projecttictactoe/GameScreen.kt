@@ -282,9 +282,3 @@ private fun GameScreenPreview() {
 
     GameScreen(navController = navController, tictactoeList = tictactoeList)
 }
-
-@Composable
-private fun Frame18Preview() {
-    val navController = rememberNavController()
-    Frame18(navController = navController, onDismiss = { }, winnerId = "X") // Korrigerad förhandsgranskning
-}
