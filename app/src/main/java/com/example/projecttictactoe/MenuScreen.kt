@@ -14,13 +14,17 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,14 +42,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
+import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
-fun MenuScreen(navController: NavController, tictactoeList: MutableList<String>) {
-    val userName = tictactoeList.lastOrNull() ?: "Player"
+fun MenuScreen(navController: NavController,
+               //tictactoeList: MutableList<String>,
+               model: GameModel) {
+    //val userName = tictactoeList.lastOrNull() ?: "Player"
+    val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
+    val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
+
+    LaunchedEffect(games) {
+        games.forEach { (gameId, game) ->
+            if ((game.player1Id == model.myPlayerId.value || game.player2Id == model.myPlayerId.value) && game.gameState == "player1_turn") {
+                navController.navigate("GameScreen/{gameId}")
+            }
+        }
+    }
+
+    var playerName = "Unknown?"
+    players[model.myPlayerId.value]?.let {
+        playerName = it.name
+    }
 
     Box(
         modifier = Modifier
@@ -54,7 +78,7 @@ fun MenuScreen(navController: NavController, tictactoeList: MutableList<String>)
             .background(color = Color(0xffc1aeca))
     ) {
         Text(
-            text = "Game Requests \n$userName",
+            text = "Game Requests $playerName",  // $userName
             color = Color(0xfff5f5f5),
             fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center,
@@ -98,26 +122,45 @@ fun MenuScreen(navController: NavController, tictactoeList: MutableList<String>)
                 .requiredWidth(width = 294.dp)
                 .requiredHeight(height = 574.dp)
         ) {
-            List2Density(navController = navController)
+            //Requests(navController = navController, model = model)
+            LazyColumn (modifier = Modifier) {
+                items(players.entries.toList()) { (documentId, player) ->
+                    if (documentId != model.myPlayerId.value) {
+                        ListItem(
+                            headlineContent =  {
+                                Text("Player Name: ${player.name}")
+                            },
+                            supportingContent = {
+
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
-
+/*
 @Composable
-fun List2Density(navController: NavController,modifier: Modifier = Modifier) {
+fun Requests(navController: NavController,
+             modifier: Modifier = Modifier,
+             model: GameModel) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .requiredWidth(width = 294.dp)
             .requiredHeight(height = 389.dp)
             .background(color = Color(0xfffef7ff))
     ) {
-        repeat(8) { //List connected to the fire base
+        /*repeat(8) { //List connected to the fire base
             Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(navController = navController)
-        }
+        }*/
+
 
     }
 }
 
+ */
+/*
 @Composable
 fun Condition1LineLeadingMonogramTrailingCheckBoxShowOverlineFalseSho(
     navController: NavController, modifier: Modifier = Modifier) {
@@ -250,11 +293,15 @@ fun BuildingBlocksstatelayer1Enabled(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize())
 }
-
+*/
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun MenuScreenPreview() {
     val navController = rememberNavController()
-    val tictactoeList = remember { mutableStateListOf("SampleUser") }
-    MenuScreen(navController = navController, tictactoeList = tictactoeList)
+    //val tictactoeList = remember { mutableStateListOf("SampleUser") }
+    val model = GameModel()
+
+    MenuScreen(navController = navController,
+        //tictactoeList = tictactoeList,
+        model)
 }

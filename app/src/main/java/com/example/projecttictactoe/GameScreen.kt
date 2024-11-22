@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -35,14 +36,17 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.
+import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 
 //Make a tictactoeList username function that types out
 // "$username 's turn" at the bottom of the page connected
 // to the OS
 
 @Composable
-fun GameScreen(navController: NavController, tictactoeList: MutableList<String>,
+fun GameScreen(navController: NavController,
+               //tictactoeList: MutableList<String>,
+               model: GameModel,
+               gameId: String
 ) {
     var currentPlayer by remember { mutableStateOf("X") }
     val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }

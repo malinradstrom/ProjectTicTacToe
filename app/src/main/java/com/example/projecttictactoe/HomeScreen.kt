@@ -1,30 +1,38 @@
 package com.example.projecttictactoe
 
 import android.content.Context
+//import android.graphics.ColorSpace
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+//import androidx.compose.foundation.border
+//import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+//import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+//import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+//import androidx.compose.foundation.text.KeyboardActions
+//import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+//import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+//import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+//import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,19 +46,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
+//import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+//import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+//import androidx.navigation.compose.NavHost
+//import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
-import kotlin.String
+//import kotlinx.coroutines.flow.asStateFlow
+//import kotlin.apply
 
+
+/*
 @Composable
 fun TicTacToe() {
     val navController = rememberNavController()
@@ -68,6 +80,8 @@ fun TicTacToe() {
             GameScreen(navController, model, gameId) }
     }
 }
+
+ */
 
 @Composable
 fun HomeScreen(
@@ -87,16 +101,20 @@ fun HomeScreen(
     if (model.myPlayerId.value == null) {
         var playerName by remember { mutableStateOf("") }
 
-        Box(
+        //Box(
+        Column (
             modifier = Modifier
-                .requiredWidth(width = 412.dp)
-                .requiredHeight(height = 917.dp)
+                //.requiredWidth(width = 412.dp)
+                //.requiredHeight(height = 917.dp)
+                .fillMaxSize()
                 .clip(shape = RoundedCornerShape(30.dp))
-                .background(color = Color(0xffc1aeca))
+                .background(color = Color(0xffc1aeca)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Title()
-            StartGameButton(navController, Modifier)
-            UsernameInputField(
+            //StartGameButton(navController, Modifier, model)
+            /*UsernameInputField(
                 userName = userName,
                 onUserNameChange = { newName ->
                     if (newName.length <= 20 && newName.all { it.isLetterOrDigit() }) {
@@ -113,16 +131,85 @@ fun HomeScreen(
                 modifier = Modifier
                     .offset(x = 20.dp, y = 0.dp)
                     .requiredWidth(210.dp)
+            )*/
+            OutlinedTextField(
+                value = playerName,
+                onValueChange = { playerName = it },
+                label = { Text("Enter Username") },
+                modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedButton(
+                //onClick = { navController.navigate("MenuScreen") },
+                onClick = {
+                    if (playerName.isNotBlank()) {
+                        val newPlayer = Player(name = playerName)
+                        model.db.collection("players").add(newPlayer).addOnSuccessListener { documentRef ->
+                            val newPlayerId = documentRef.id
+
+                            sharedPreferences.edit().putString("playerId", newPlayerId).apply()
+
+                            model.myPlayerId.value = newPlayerId
+                            navController.navigate("lobby") }
+                            .addOnFailureListener { error ->
+                                Log.e("Error", "Error creating player: ${error.message} ")
+                            }
+                    } },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
+                contentPadding = PaddingValues(all = 12.dp),
+                border = BorderStroke(1.dp, Color(0xff2c2c2c)
+                ),
+                modifier = Modifier
+                    .offset(x = 112.dp,
+                        y = 591.dp)
+                    .requiredWidth(width = 188.dp)
+                    .requiredHeight(height = 78.dp)
+
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp,
+                        Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .requiredWidth(width = 188.dp)
+                        .requiredHeight(height = 78.dp)
+                ) {
+                    Text(
+                        text = "Create Player",
+                        color = Color(0xfff5f5f5),
+                        lineHeight = 6.25.em,
+                        style = TextStyle(
+                            fontSize = 24.sp))
+                }
+            }
         }
     }
 }
 
-
+/*
 @Composable
-fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) {
+fun StartGameButton(navController: NavController,modifier: Modifier = Modifier, model: GameModel) {
+
+    Player()
+    Game()
     OutlinedButton(
-        onClick = { navController.navigate("MenuScreen") },
+        //onClick = { navController.navigate("MenuScreen") },
+        onClick = {
+            if (playerName.isNotBlank()) {
+                val newPlayer = Player(name = playerName)
+                model.db.collection("players").add(newPlayer).addOnSucessListner { documentRef ->
+                    val newPlayerId = documentRef.id
+
+                    sharedPreferences.edit().putString("playerId", newPlayerId).apply()
+
+                    model.myPlayerId.value = newPlayerId
+                    navController.navigate("lobby") }
+                    .addOnFailureListner { error ->
+                        Log.e("Error", "Error creating player: ${error.message} ")
+                    }
+            } },
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
         contentPadding = PaddingValues(all = 12.dp),
@@ -144,7 +231,7 @@ fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) 
                 .requiredHeight(height = 78.dp)
         ) {
             Text(
-                text = "Save Player",
+                text = "Create Player",
                 color = Color(0xfff5f5f5),
                 lineHeight = 6.25.em,
                 style = TextStyle(
@@ -152,7 +239,9 @@ fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) 
         }
     }
 }
+*/
 
+/*
 @Composable
 fun UsernameInputField(userName: String,
                        onUserNameChange: (String) -> Unit,
@@ -208,7 +297,7 @@ fun UsernameInputField(userName: String,
             )
         }
     }
-}
+}*/
 
 @Composable
 fun Title(modifier: Modifier = Modifier) {
@@ -233,7 +322,8 @@ fun Title(modifier: Modifier = Modifier) {
 @Composable
 private fun HomeScreenPreview() {
     val navController = rememberNavController()
-    val tictactoeList = remember { mutableStateListOf<String>() }
+    //val tictactoeList = remember { mutableStateListOf<String>() }
+    val model = GameModel()
 
-    HomeScreen(navController = navController, tictactoeList = tictactoeList)
+    HomeScreen(navController = navController, model)
 }
