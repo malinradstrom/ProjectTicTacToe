@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,30 +35,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
+import kotlinx.coroutines.flow.asStateFlow
 
 //Make a tictactoeList username function that types out
 // "$username 's turn" at the bottom of the page connected
 // to the OS
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(navController: NavController,
                //tictactoeList: MutableList<String>,
                model: GameModel,
                gameId: String
 ) {
+    /*
     var currentPlayer by remember { mutableStateOf("X") }
     val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
     var winner by remember { mutableStateOf<String?>(null) }
     var showWinnerDialog by remember { mutableStateOf(false) }
+    */
 
-    Box(
+    val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
+    val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
+
+    //Box(
+    Column (
         modifier = Modifier
             .requiredWidth(width = 412.dp)
             .requiredHeight(height = 917.dp)
             .clip(shape = RoundedCornerShape(30.dp))
+            .background(color = Color(0xffc1aeca))
     ) {
         Box(
             modifier = Modifier

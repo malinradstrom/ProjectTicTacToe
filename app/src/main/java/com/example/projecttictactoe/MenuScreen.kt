@@ -16,12 +16,15 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.value
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,7 +52,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.collections.forEach
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuScreen(navController: NavController,
                //tictactoeList: MutableList<String>,
@@ -60,8 +65,9 @@ fun MenuScreen(navController: NavController,
 
     LaunchedEffect(games) {
         games.forEach { (gameId, game) ->
+            // TODO: Popup with accept invite?
             if ((game.player1Id == model.myPlayerId.value || game.player2Id == model.myPlayerId.value) && game.gameState == "player1_turn") {
-                navController.navigate("GameScreen/{gameId}")
+                navController.navigate("GameScreen/${gameId}")
             }
         }
     }
@@ -131,7 +137,41 @@ fun MenuScreen(navController: NavController,
                                 Text("Player Name: ${player.name}")
                             },
                             supportingContent = {
-
+                                Text("Status: ")
+                            },
+                            trailingContent = {
+                                var hasGame = false
+                                games.forEach { (gameId, game) ->
+                                    if (game.player1Id == model.myPlayerId.value && game.gameState == "Invite") {
+                                        Text("Please Wait :')")
+                                        hasGame = true
+                                    } else if (game.player2Id == model.myPlayerId.value && game.gameState == "Invite") {
+                                        Button(onClick = {
+                                            model.db.collection("games").document(gameId)
+                                                .update("gameState", "player1_turn")
+                                                .addOnSuccessListener {
+                                                    navController.navigate("GameScreen/${gameId}")
+                                                }
+                                                .addOnFailureListener {
+                                                    Log.e("fuq of", "error updating game: $gameId")
+                                                }
+                                        }) {
+                                            Text("Accept invite")
+                                        }
+                                        hasGame = true
+                                    }
+                                }
+                                if (!hasGame) {
+                                    Button(onClick = {
+                                        model.db.collection("games")
+                                            .add(Game(gameState = "Invite", player1Id = model.myPlayerId.value!!, player2Id = documentId))
+                                            .addOnSuccessListener {documentRef ->
+                                                //TODO
+                                            }
+                                    }) {
+                                        Text("Challenge")
+                                    }
+                                }
                             }
                         )
                     }
