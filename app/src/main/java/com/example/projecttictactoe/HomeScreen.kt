@@ -1,5 +1,6 @@
 package com.example.projecttictactoe
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +22,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,44 +45,76 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 import kotlin.String
+
+@Composable
+fun TicTacToe() {
+    val navController = rememberNavController()
+    val model = GameModel()
+    model.initGame()
+
+    NavHost(
+        navController = navController,
+        startDestination = "HomeScreen"
+    ) {
+        composable("HomeScreen") { HomeScreen(navController, model) }
+        composable("MenuScreen") { MenuScreen(navController, model) }
+        composable("GameScreen/{gameId}") { backStackEntry ->
+            val gameId = backStackEntry.arguments?.getString("gameId")
+            GameScreen(navController, model, gameId) }
+    }
+}
 
 @Composable
 fun HomeScreen(
     navController: NavController,
-    tictactoeList: MutableList<String>,
+    //tictactoeList: MutableList<String>,
+    model: GameModel
 ) {
-    var userName by remember { mutableStateOf("") }
-    var isEditing by remember { mutableStateOf(true) }
+    //var userName by remember { mutableStateOf("") }
+    //var isEditing by remember { mutableStateOf(true) }
+    val sharedPreferences = LocalContext.current.getSharedPreferences("TicPrefs", Context.MODE_PRIVATE)
+    LaunchedEffect(Unit) {
+        model.myPlayerId.value = sharedPreferences.getString("playerId", null)
+        if (model.myPlayerId.value != null) {
+            navController.navigate("MenuScreen")
+        }
+    }
+    if (model.myPlayerId.value == null) {
+        var playerName by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .requiredWidth(width = 412.dp)
-            .requiredHeight(height = 917.dp)
-            .clip(shape = RoundedCornerShape(30.dp))
-            .background(color = Color(0xffc1aeca))
-    ) {
-        Title()
-        StartGameButton(navController, Modifier)
-        UsernameInputField(
-            userName = userName,
-            onUserNameChange = { newName ->
-                if (newName.length <= 20 && newName.all { it.isLetterOrDigit() }) {
-                    userName = newName
-                }
-            },
-            onUserNameSave = {
-                if (userName.isNotBlank()) {
-                    tictactoeList.add(userName) // Save username to the list
-                    isEditing = false // Exit editing mode after saving
-                }
-            },
-            isEditing = isEditing,
+        Box(
             modifier = Modifier
-                .offset(x = 20.dp, y = 0.dp)
-                .requiredWidth(210.dp)
-        )
+                .requiredWidth(width = 412.dp)
+                .requiredHeight(height = 917.dp)
+                .clip(shape = RoundedCornerShape(30.dp))
+                .background(color = Color(0xffc1aeca))
+        ) {
+            Title()
+            StartGameButton(navController, Modifier)
+            UsernameInputField(
+                userName = userName,
+                onUserNameChange = { newName ->
+                    if (newName.length <= 20 && newName.all { it.isLetterOrDigit() }) {
+                        userName = newName
+                    }
+                },
+                onUserNameSave = {
+                    if (userName.isNotBlank()) {
+                        tictactoeList.add(userName) // Save username to the list
+                        isEditing = false // Exit editing mode after saving
+                    }
+                },
+                isEditing = isEditing,
+                modifier = Modifier
+                    .offset(x = 20.dp, y = 0.dp)
+                    .requiredWidth(210.dp)
+            )
+        }
     }
 }
 
@@ -109,7 +144,7 @@ fun StartGameButton(navController: NavController,modifier: Modifier = Modifier) 
                 .requiredHeight(height = 78.dp)
         ) {
             Text(
-                text = "Start Game",
+                text = "Save Player",
                 color = Color(0xfff5f5f5),
                 lineHeight = 6.25.em,
                 style = TextStyle(
