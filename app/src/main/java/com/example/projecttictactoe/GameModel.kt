@@ -6,6 +6,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.compose.runtime.*
+import com.example.projecttictactoe.Game
+import com.example.projecttictactoe.Player
 
 
 class GameModel: ViewModel() {

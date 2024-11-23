@@ -1,35 +1,39 @@
 package com.example.projecttictactoe
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+//import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+//import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+//import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+//import androidx.compose.foundation.layout.padding
+//import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
+//import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
+//import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+//import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
+//import androidx.compose.material3.Scaffold
+//import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.value
+//import androidx.compose.material3.value
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+//import androidx.compose.runtime.mutableStateListOf
+//import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,12 +51,17 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+//import androidx.navigation.compose.NavHost
+//import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.collections.forEach
+
+import com.example.projecttictactoe.Game
+import com.example.projecttictactoe.Player
+import com.example.projecttictactoe.MainActivity
+import com.example.projecttictactoe.HomeScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,8 +88,7 @@ fun MenuScreen(navController: NavController,
 
     Box(
         modifier = Modifier
-            .requiredWidth(width = 412.dp)
-            .requiredHeight(height = 917.dp)
+            .fillMaxSize()
             .background(color = Color(0xffc1aeca))
     ) {
         Text(
@@ -127,7 +135,7 @@ fun MenuScreen(navController: NavController,
                     y = 320.dp)
                 .requiredWidth(width = 294.dp)
                 .requiredHeight(height = 574.dp)
-        ) {
+        ) { //innerPadding ->
             //Requests(navController = navController, model = model)
             LazyColumn (modifier = Modifier) {
                 items(players.entries.toList()) { (documentId, player) ->
@@ -142,10 +150,12 @@ fun MenuScreen(navController: NavController,
                             trailingContent = {
                                 var hasGame = false
                                 games.forEach { (gameId, game) ->
-                                    if (game.player1Id == model.myPlayerId.value && game.gameState == "Invite") {
+                                    if (game.player1Id == model.myPlayerId.value
+                                        && game.gameState == "Invite") {
                                         Text("Please Wait :')")
                                         hasGame = true
-                                    } else if (game.player2Id == model.myPlayerId.value && game.gameState == "Invite") {
+                                    } else if (game.player2Id == model.myPlayerId.value
+                                        && game.gameState == "Invite") {
                                         Button(onClick = {
                                             model.db.collection("games").document(gameId)
                                                 .update("gameState", "player1_turn")
@@ -164,7 +174,9 @@ fun MenuScreen(navController: NavController,
                                 if (!hasGame) {
                                     Button(onClick = {
                                         model.db.collection("games")
-                                            .add(Game(gameState = "Invite", player1Id = model.myPlayerId.value!!, player2Id = documentId))
+                                            .add(Game(gameState = "Invite",
+                                                player1Id = model.myPlayerId.value!!,
+                                                player2Id = documentId))
                                             .addOnSuccessListener {documentRef ->
                                                 //TODO
                                             }
@@ -334,7 +346,7 @@ fun BuildingBlocksstatelayer1Enabled(modifier: Modifier = Modifier) {
             .fillMaxSize())
 }
 */
-@Preview(widthDp = 412, heightDp = 917)
+@Preview
 @Composable
 private fun MenuScreenPreview() {
     val navController = rememberNavController()

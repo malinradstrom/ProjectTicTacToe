@@ -1,14 +1,14 @@
 package com.example.projecttictactoe
 
-import android.annotation.SuppressLint
+//import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.navigation.NavHostController
+//import androidx.compose.runtime.mutableStateListOf
+//import androidx.compose.runtime.remember
+//import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -81,6 +81,6 @@ fun TicTacToe() {
         composable("MenuScreen") { MenuScreen(navController, model) }
         composable("GameScreen/{gameId}") { backStackEntry ->
             val gameId = backStackEntry.arguments?.getString("gameId")
-            GameScreen(navController, model, gameId) }
+            GameScreen(navController, model, gameId.toString()) }
     }
 }

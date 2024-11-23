@@ -40,9 +40,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 import kotlinx.coroutines.flow.asStateFlow
+import com.example.projecttictactoe.Game
+import com.example.projecttictactoe.Player
 
 //Make a tictactoeList username function that types out
-// "$username 's turn" at the bottom of the page connected
+// "$playerId 's turn" at the bottom of the page connected
 // to the OS
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +54,7 @@ fun GameScreen(navController: NavController,
                model: GameModel,
                gameId: String
 ) {
+    Game()
     /*
     var currentPlayer by remember { mutableStateOf("X") }
     val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
@@ -62,73 +65,76 @@ fun GameScreen(navController: NavController,
     val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
     val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
 
-    //Box(
-    Column (
-        modifier = Modifier
-            .requiredWidth(width = 412.dp)
-            .requiredHeight(height = 917.dp)
-            .clip(shape = RoundedCornerShape(30.dp))
-            .background(color = Color(0xffc1aeca))
-    ) {
-        Box(
+    if (gameId != null && games.containsKey(gameId)) {
+        //Box(
+        Column (    //Background
             modifier = Modifier
                 .fillMaxSize()
+                .clip(shape = RoundedCornerShape(30.dp))
                 .background(color = Color(0xffc1aeca))
         ) {
-            AlignCenter3(modifier = Modifier.align(Alignment.TopCenter).padding(top = 160.dp))
-
-            Image(
-                painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = "arrow_back_cancel_game",
+            Box(
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 48.dp, top = 57.dp)
-                    .clickable {
-                        winner = if (currentPlayer == "X") "O" else "X"
-                        showWinnerDialog = true
-                    }
-            )
-        }
+                    .fillMaxSize()
+                    .background(color = Color(0xffc1aeca))
+            ) {
+                AlignCenter3(modifier = Modifier.align(Alignment.TopCenter).padding(top = 160.dp), model, gameId)
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            TicTacToeBoard(
-                boardState = boardState,
-                onBoxClick = { index ->
-                    if (winner == null && boardState[index] == null) {
-                        boardState[index] = currentPlayer
-                        winner = checkForWinner(boardState)
-                        if (winner != null) {
+                Image(
+                    painter = painterResource(id = R.drawable.arrow_back),
+                    contentDescription = "arrow_back_cancel_game",
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(start = 48.dp, top = 57.dp)
+                        .clickable {
+                            winner = if (currentPlayer == "X") "O" else "X"
                             showWinnerDialog = true
-                        } else {
-                            currentPlayer = if (currentPlayer == "X") "O" else "X"
                         }
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
-        if (winner != null) {
-            if (showWinnerDialog) {
-                Frame18(
-                    navController = navController,
-                    modifier = Modifier.align(Alignment.Center),
-                    onDismiss = {
-                        showWinnerDialog = false
-                        boardState.fill(null)
-                        winner = null
-                        currentPlayer = "X"
-                        navController.navigate("MenuScreen")
-                    },
-                    winnerId = winner ?: ""
                 )
+            }
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                TicTacToeBoard(
+                    boardState = gameState,
+                    onBoxClick = { index ->
+                        if (winner == null && boardState[index] == null) {
+                            boardState[index] = currentPlayer
+                            winner = checkForWinner(boardState)
+                            if (winner != null) {
+                                showWinnerDialog = true
+                            } else {
+                                currentPlayer = if (currentPlayer == "X") "O" else "X"
+                            }
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            if (winner != null) {
+                if (showWinnerDialog) {
+                    Frame18(
+                        navController = navController,
+                        modifier = Modifier.align(Alignment.Center),
+                        onDismiss = {
+                            showWinnerDialog = false
+                            boardState.fill(null)
+                            winner = null
+                            currentPlayer = "X"
+                            navController.navigate("MenuScreen")
+                        },
+                        winnerId = winner ?: ""
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun AlignCenter3(modifier: Modifier = Modifier) {
+fun AlignCenter3(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
+    val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
+    val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,7 +157,7 @@ fun AlignCenter3(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Game Started",
+            text = "Game state: ${games[gameId]!!.gameState}",
             color = Color(0xff1e1e1e),
             textAlign = TextAlign.Center,
             lineHeight = 5.em,
@@ -289,11 +295,16 @@ fun Frame18(navController: NavController,
     }
 }
 
-@Preview(widthDp = 412, heightDp = 917)
+@Preview
 @Composable
 private fun GameScreenPreview() {
     val navController = rememberNavController()
-    val tictactoeList = remember { mutableStateListOf<String>() }
+    //val tictactoeList = remember { mutableStateListOf<String>() }
+    val model = GameModel()
+    val gameId = ("gameId")
 
-    GameScreen(navController = navController, tictactoeList = tictactoeList)
+    GameScreen(navController = navController,
+        //tictactoeList = tictactoeList,
+        model,
+        gameId)
 }

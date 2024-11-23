@@ -104,8 +104,6 @@ fun HomeScreen(
         //Box(
         Column (
             modifier = Modifier
-                //.requiredWidth(width = 412.dp)
-                //.requiredHeight(height = 917.dp)
                 .fillMaxSize()
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(color = Color(0xffc1aeca)),
@@ -318,7 +316,7 @@ fun Title(modifier: Modifier = Modifier) {
             .requiredWidth(width = 364.dp))
 }
 
-@Preview(widthDp = 412, heightDp = 917)
+@Preview
 @Composable
 private fun HomeScreenPreview() {
     val navController = rememberNavController()
