@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 //import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 //import androidx.compose.material3.Checkbox
@@ -58,11 +59,6 @@ import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.collections.forEach
 
-import com.example.projecttictactoe.Game
-import com.example.projecttictactoe.Player
-import com.example.projecttictactoe.MainActivity
-import com.example.projecttictactoe.HomeScreen
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuScreen(navController: NavController,
@@ -75,7 +71,9 @@ fun MenuScreen(navController: NavController,
     LaunchedEffect(games) {
         games.forEach { (gameId, game) ->
             // TODO: Popup with accept invite?
-            if ((game.player1Id == model.myPlayerId.value || game.player2Id == model.myPlayerId.value) && game.gameState == "player1_turn") {
+            if ((game.player1Id == model.myPlayerId.value
+                                || game.player2Id == model.myPlayerId.value)
+                                && game.gameState == "player1_turn") {
                 navController.navigate("GameScreen/${gameId}")
             }
         }
@@ -138,7 +136,10 @@ fun MenuScreen(navController: NavController,
         ) { //innerPadding ->
             //Requests(navController = navController, model = model)
             LazyColumn (modifier = Modifier) {
-                items(players.entries.toList()) { (documentId, player) ->
+                items(players.entries.toList()) { entry  ->
+                    val player = entry.value
+                    val documentId = entry.key
+
                     if (documentId != model.myPlayerId.value) {
                         ListItem(
                             headlineContent =  {
@@ -163,7 +164,7 @@ fun MenuScreen(navController: NavController,
                                                     navController.navigate("GameScreen/${gameId}")
                                                 }
                                                 .addOnFailureListener {
-                                                    Log.e("fuq of", "error updating game: $gameId")
+                                                    Log.e("merry christmas", "error updating game: $gameId")
                                                 }
                                         }) {
                                             Text("Accept invite")
@@ -176,7 +177,8 @@ fun MenuScreen(navController: NavController,
                                         model.db.collection("games")
                                             .add(Game(gameState = "Invite",
                                                 player1Id = model.myPlayerId.value!!,
-                                                player2Id = documentId))
+                                                player2Id = documentId
+                                            ))
                                             .addOnSuccessListener {documentRef ->
                                                 //TODO
                                             }

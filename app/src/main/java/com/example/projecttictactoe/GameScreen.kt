@@ -54,16 +54,27 @@ fun GameScreen(navController: NavController,
                model: GameModel,
                gameId: String
 ) {
-    Game()
+
+    var currentPlayer by remember { mutableStateOf(1) }  //"X"
     /*
-    var currentPlayer by remember { mutableStateOf("X") }
     val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
     var winner by remember { mutableStateOf<String?>(null) }
     var showWinnerDialog by remember { mutableStateOf(false) }
     */
-
     val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
     val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
+
+    val currentGame = games[gameId]
+
+    var localGameState by remember { mutableStateOf(currentGame?.gameState?: "loading") }
+    var localGameBoard by remember { mutableStateOf(currentGame?.gameBoard?: List(9) {0}) }
+
+    LaunchedEffect(currentGame) {
+        currentGame?.let {
+            localGameState = it.gameState
+            localGameBoard = it.gameBoard
+        }
+    }
 
     if (gameId != null && games.containsKey(gameId)) {
         //Box(
@@ -86,16 +97,13 @@ fun GameScreen(navController: NavController,
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(start = 48.dp, top = 57.dp)
-                        .clickable {
-                            winner = if (currentPlayer == "X") "O" else "X"
-                            showWinnerDialog = true
-                        }
+                        .clickable { }
                 )
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
                 TicTacToeBoard(
-                    boardState = gameState,
+                    boardState = gameId as List<String?>,
                     onBoxClick = { index ->
                         if (winner == null && boardState[index] == null) {
                             boardState[index] = currentPlayer
@@ -223,6 +231,9 @@ fun checkForWinner(boardState: List<String?>): String? {
 
     return null
 }
+
+//winner = if (currentPlayer == "X") "O" else "X",
+//showWinnerDialog = true,
 @Composable
 fun Frame18(navController: NavController,
             modifier: Modifier = Modifier,
