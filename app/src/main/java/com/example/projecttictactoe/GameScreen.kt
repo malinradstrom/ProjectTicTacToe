@@ -47,17 +47,10 @@ import kotlinx.coroutines.flow.asStateFlow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(navController: NavController,
-               //tictactoeList: MutableList<String>,
                model: GameModel,
                gameId: String
 ) {
-
-    var currentPlayer by remember { mutableStateOf(1) }  //"X"
-    /*
-    val boardState = remember { mutableStateListOf<String?>(null, null, null, null, null, null, null, null, null) }
-    var winner by remember { mutableStateOf<String?>(null) }
-    var showWinnerDialog by remember { mutableStateOf(false) }
-    */
+    var currentPlayer by remember { mutableIntStateOf(1) }
     val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
     val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
 
@@ -73,9 +66,8 @@ fun GameScreen(navController: NavController,
         }
     }
 
-    if (gameId != null && games.containsKey(gameId)) {
-        //Box(
-        Column (    //Background
+    if (games.containsKey(gameId)) {
+        Column (
             modifier = Modifier
                 .fillMaxSize()
                 .clip(shape = RoundedCornerShape(30.dp))
@@ -86,7 +78,7 @@ fun GameScreen(navController: NavController,
                     .fillMaxSize()
                     .background(color = Color(0xffc1aeca))
             ) {
-                AlignCenter3(modifier = Modifier.align(Alignment.TopCenter).padding(top = 160.dp), model, gameId)
+                Title(modifier = Modifier.align(Alignment.TopCenter).padding(top = 160.dp), model, gameId)
 
                 Image(
                     painter = painterResource(id = R.drawable.arrow_back),
@@ -128,30 +120,45 @@ fun GameScreen(navController: NavController,
                         }
                     },
                     modifier = Modifier.size(300.dp)
+                        .offset(x=55.dp, y = (-420).dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (localGameState.endsWith("_won")) {
-                    Text(
-                        text = "${if (localGameState.startsWith("player1")) "Player 1" else "Player 2"} won!",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                } else if (localGameState == "draw") {
-                    Text(
-                        text = "It's a draw!",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                }
+                val currentTurnPlayerName = if (localGameState=="player1_turn") {
+                    players[currentGame?.player1Id]?.name ?: "Player1"
+                } else if (localGameState=="player2_turn") {
+                    players[currentGame?.player2Id]?.name ?: "Player2"
+                } else null
+
+                val winnerName = if (localGameState.endsWith("_won")) {
+                    if (localGameState.startsWith("player1")) {
+                        players[currentGame?.player1Id]?.name?: "Player1"
+                    } else {
+                        players[currentGame?.player2Id]?.name?: "Player2"
+                    }
+                } else null
+
             }
         }
     }
 }
 
 @Composable
-fun AlignCenter3(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
-    val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
+fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
     val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
+    val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
+
+    val currentGame = games[gameId]
+    val myPlayerId = model.myPlayerId.value
+
+    val myName = players[myPlayerId]?.name ?: "Me"
+    val opName = if (myPlayerId == currentGame?.player1Id) {
+        players[currentGame!!.player2Id]!!.name
+    } else {
+        players[currentGame?.player1Id]?.name ?: "Opponent"
+    }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,7 +181,7 @@ fun AlignCenter3(modifier: Modifier = Modifier, model: GameModel, gameId: String
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Game state: ${games[gameId]!!.gameState}",
+            text = "$myName vs $opName",
             color = Color(0xff1e1e1e),
             textAlign = TextAlign.Center,
             lineHeight = 5.em,
@@ -212,9 +219,7 @@ fun TicTacToeBoard(
                     text = when (boardState[index]) {
                         1 -> "X"
                         2 -> "O"
-                        //"X" -> Text("X", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                        //"O" -> Text("O", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                        else -> ""//{}
+                        else -> ""
                     },
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
@@ -240,16 +245,9 @@ fun checkForWinner(boardState: List<Int>): Int? {
             return boardState[a]
         }
     }
-/*
-    if (boardState.all { it != null }) {
-        return "Draw"
-    }
-*/
     return null
 }
 
-//winner = if (currentPlayer == "X") "O" else "X",
-//showWinnerDialog = true,
 @Composable
 fun Frame18(navController: NavController,
             modifier: Modifier = Modifier,
@@ -326,12 +324,8 @@ fun Frame18(navController: NavController,
 @Composable
 private fun GameScreenPreview() {
     val navController = rememberNavController()
-    //val tictactoeList = remember { mutableStateListOf<String>() }
     val model = GameModel()
     val gameId = ("gameId")
 
-    GameScreen(navController = navController,
-        //tictactoeList = tictactoeList,
-        model,
-        gameId)
+    GameScreen(navController = navController, model, gameId)
 }

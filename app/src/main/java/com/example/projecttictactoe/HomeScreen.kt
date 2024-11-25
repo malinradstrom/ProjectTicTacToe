@@ -1,14 +1,10 @@
 package com.example.projecttictactoe
 
 import android.content.Context
-//import android.graphics.ColorSpace
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
-//import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-//import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,22 +13,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-//import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.foundation.text.KeyboardActions
-//import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-//import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-//import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,51 +36,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-//import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-//import androidx.navigation.compose.NavHost
-//import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
-//import kotlinx.coroutines.flow.asStateFlow
-//import kotlin.apply
-
-
-/*
-@Composable
-fun TicTacToe() {
-    val navController = rememberNavController()
-    val model = GameModel()
-    model.initGame()
-
-    NavHost(
-        navController = navController,
-        startDestination = "HomeScreen"
-    ) {
-        composable("HomeScreen") { HomeScreen(navController, model) }
-        composable("MenuScreen") { MenuScreen(navController, model) }
-        composable("GameScreen/{gameId}") { backStackEntry ->
-            val gameId = backStackEntry.arguments?.getString("gameId")
-            GameScreen(navController, model, gameId) }
-    }
-}
-
- */
 
 @Composable
 fun HomeScreen(
     navController: NavController,
-    //tictactoeList: MutableList<String>,
     model: GameModel
 ) {
-    //var userName by remember { mutableStateOf("") }
-    //var isEditing by remember { mutableStateOf(true) }
     val sharedPreferences = LocalContext.current.getSharedPreferences("TicPrefs", Context.MODE_PRIVATE)
     LaunchedEffect(Unit) {
         model.myPlayerId.value = sharedPreferences.getString("playerId", null)
@@ -101,7 +60,6 @@ fun HomeScreen(
     if (model.myPlayerId.value == null) {
         var playerName by remember { mutableStateOf("") }
 
-        //Box(
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -112,7 +70,6 @@ fun HomeScreen(
         ) {
             Title()
             Spacer(modifier = Modifier.height(16.dp))
-            //StartGameButton(navController, Modifier, model)
             /*UsernameInputField(
                 userName = userName,
                 onUserNameChange = { newName ->
@@ -140,7 +97,6 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                //onClick = { navController.navigate("MenuScreen") },
                 onClick = {
                     if (playerName.isNotBlank()) {
                         val newPlayer = Player(name = playerName)
@@ -161,12 +117,6 @@ fun HomeScreen(
                 contentPadding = PaddingValues(all = 12.dp),
                 border = BorderStroke(1.dp, Color(0xff2c2c2c)
                 ),
-                /*modifier = Modifier
-                    .offset(x = 112.dp,
-                        y = 591.dp)
-                    .requiredWidth(width = 188.dp)
-                    .requiredHeight(height = 78.dp)
-                */
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp,
@@ -188,114 +138,6 @@ fun HomeScreen(
     }
 }
 
-/*
-@Composable
-fun StartGameButton(navController: NavController,modifier: Modifier = Modifier, model: GameModel) {
-    OutlinedButton(
-        //onClick = { navController.navigate("MenuScreen") },
-        onClick = {
-            if (playerName.isNotBlank()) {
-                val newPlayer = Player(name = playerName)
-                model.db.collection("players").add(newPlayer).addOnSucessListner { documentRef ->
-                    val newPlayerId = documentRef.id
-
-                    sharedPreferences.edit().putString("playerId", newPlayerId).apply()
-
-                    model.myPlayerId.value = newPlayerId
-                    navController.navigate("lobby") }
-                    .addOnFailureListner { error ->
-                        Log.e("Error", "Error creating player: ${error.message} ")
-                    }
-            } },
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
-        contentPadding = PaddingValues(all = 12.dp),
-        border = BorderStroke(1.dp, Color(0xff2c2c2c)
-        ),
-        modifier = modifier
-            .offset(x = 112.dp,
-                y = 591.dp)
-            .requiredWidth(width = 188.dp)
-            .requiredHeight(height = 78.dp)
-
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp,
-                Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .requiredWidth(width = 188.dp)
-                .requiredHeight(height = 78.dp)
-        ) {
-            Text(
-                text = "Create Player",
-                color = Color(0xfff5f5f5),
-                lineHeight = 6.25.em,
-                style = TextStyle(
-                    fontSize = 24.sp))
-        }
-    }
-}
-*/
-
-/*
-@Composable
-fun UsernameInputField(userName: String,
-                       onUserNameChange: (String) -> Unit,
-                       onUserNameSave: () -> Unit,
-                       isEditing: Boolean,
-                       modifier: Modifier = Modifier) {
-    // State variables to hold the username and edit mode
-    Box(modifier) {
-        if (isEditing) {
-            OutlinedTextField(
-                value = userName,
-                onValueChange = onUserNameChange,
-                singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    onUserNameSave() // Save username on Enter key press
-                }),
-                placeholder = {
-                    Text(
-                        text = "Enter Username",
-                        color = Color.Gray,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center
-                    )
-                },
-                modifier = Modifier
-                    .border(width = 1.dp, color = Color.Gray)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .offset(x = 85.dp,
-                        y = 403.dp)
-                    .requiredWidth(width = 210.dp)
-            )
-        } else {
-            // Display the saved username when not in editing mode
-            Text(
-                text = userName.ifEmpty { "Enter Username" },
-                color = Color.Black,
-                fontSize = 28.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .border(width = 1.dp, color = Color.Gray)
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .offset(x = 85.dp,
-                        y = 403.dp)
-                    .requiredWidth(width = 210.dp)
-                    .clickable { onUserNameSave() } // Re-enter editing mode when tapped
-            )
-        }
-    }
-}*/
-
 @Composable
 fun Title(modifier: Modifier = Modifier) {
     Text(
@@ -311,7 +153,7 @@ fun Title(modifier: Modifier = Modifier) {
                 offset = Offset(6f, 10f),
                 blurRadius = 4f)),
         modifier = modifier
-            .offset(x=1.dp, y = -40.dp)
+            .offset(x=1.dp, y = (-40).dp)
             .requiredWidth(width = 364.dp))
 }
 
@@ -319,7 +161,6 @@ fun Title(modifier: Modifier = Modifier) {
 @Composable
 private fun HomeScreenPreview() {
     val navController = rememberNavController()
-    //val tictactoeList = remember { mutableStateListOf<String>() }
     val model = GameModel()
 
     HomeScreen(navController = navController, model)
