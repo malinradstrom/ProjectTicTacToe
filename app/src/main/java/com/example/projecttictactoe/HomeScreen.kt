@@ -111,6 +111,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Title()
+            Spacer(modifier = Modifier.height(16.dp))
             //StartGameButton(navController, Modifier, model)
             /*UsernameInputField(
                 userName = userName,
@@ -136,7 +137,7 @@ fun HomeScreen(
                 label = { Text("Enter Username") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
                 //onClick = { navController.navigate("MenuScreen") },
@@ -149,22 +150,23 @@ fun HomeScreen(
                             sharedPreferences.edit().putString("playerId", newPlayerId).apply()
 
                             model.myPlayerId.value = newPlayerId
-                            navController.navigate("lobby") }
+                            navController.navigate("MenuScreen") }
                             .addOnFailureListener { error ->
                                 Log.e("Error", "Error creating player: ${error.message} ")
                             }
                     } },
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xff2c2c2c)),
                 contentPadding = PaddingValues(all = 12.dp),
                 border = BorderStroke(1.dp, Color(0xff2c2c2c)
                 ),
-                modifier = Modifier
+                /*modifier = Modifier
                     .offset(x = 112.dp,
                         y = 591.dp)
                     .requiredWidth(width = 188.dp)
                     .requiredHeight(height = 78.dp)
-
+                */
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp,
@@ -189,9 +191,6 @@ fun HomeScreen(
 /*
 @Composable
 fun StartGameButton(navController: NavController,modifier: Modifier = Modifier, model: GameModel) {
-
-    Player()
-    Game()
     OutlinedButton(
         //onClick = { navController.navigate("MenuScreen") },
         onClick = {
@@ -312,7 +311,7 @@ fun Title(modifier: Modifier = Modifier) {
                 offset = Offset(6f, 10f),
                 blurRadius = 4f)),
         modifier = modifier
-            .offset(x=24.dp, y = 99.dp)
+            .offset(x=1.dp, y = -40.dp)
             .requiredWidth(width = 364.dp))
 }
 

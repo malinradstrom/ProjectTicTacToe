@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -40,8 +39,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
 import kotlinx.coroutines.flow.asStateFlow
-import com.example.projecttictactoe.Game
-import com.example.projecttictactoe.Player
 
 //Make a tictactoeList username function that types out
 // "$playerId 's turn" at the bottom of the page connected
@@ -103,14 +100,15 @@ fun GameScreen(navController: NavController,
 
             Box(modifier = Modifier.fillMaxSize()) {
                 TicTacToeBoard(
-                    boardState = localGameState //gameState
+                    boardState = localGameBoard,
                     onBoxClick = { index ->
                         if (localGameBoard[index] == 0 && localGameState == "player${currentPlayer}_turn") {
-                            //update local board
+                            // Update local board
                             localGameBoard = localGameBoard.toMutableList().apply { set(index, currentPlayer) }
 
+                            // control winner
                             val winner = checkForWinner(localGameBoard)
-                            if ( winner != null ) {
+                            if (winner != null) {
                                 localGameState = if (winner == 1) "player1_won" else "player2_won"
                             } else if (localGameBoard.none { it == 0 }) {
                                 localGameState = "draw"
@@ -119,7 +117,7 @@ fun GameScreen(navController: NavController,
                                 localGameState = "player${currentPlayer}_turn"
                             }
 
-                            // Update FireStore
+                            // Update Firestore
                             model.db.collection("games").document(gameId)
                                 .update(
                                     mapOf(
@@ -130,41 +128,22 @@ fun GameScreen(navController: NavController,
                         }
                     },
                     modifier = Modifier.size(300.dp)
-                    /*onBoxClick = { index ->
-                        if (winner == null && boardState[index] == null) {
-                            boardState[index] = currentPlayer
-                            winner = checkForWinner(boardState)
-                            if (winner != null) {
-                                showWinnerDialog = true
-                            } else {
-                                currentPlayer = if (currentPlayer == "X") "O" else "X"
-                            }
-                        }
-                    }*/,
-                    //modifier = Modifier.align(Alignment.Center)
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
-            }
-            if (localGameState.endsWith("_won")) {
-                Text( text = "$(if (loca")
-            }
-            /*
-            if (winner != null) {
-                if (showWinnerDialog) {
-                    Frame18(
-                        navController = navController,
-                        modifier = Modifier.align(Alignment.Center),
-                        onDismiss = {
-                            showWinnerDialog = false
-                            boardState.fill(null)
-                            winner = null
-                            currentPlayer = "X"
-                            navController.navigate("MenuScreen")
-                        },
-                        winnerId = winner ?: ""
+
+                if (localGameState.endsWith("_won")) {
+                    Text(
+                        text = "${if (localGameState.startsWith("player1")) "Player 1" else "Player 2"} won!",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                } else if (localGameState == "draw") {
+                    Text(
+                        text = "It's a draw!",
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
-            }*/
+            }
         }
     }
 }
@@ -209,7 +188,7 @@ fun AlignCenter3(modifier: Modifier = Modifier, model: GameModel, gameId: String
 
 @Composable
 fun TicTacToeBoard(
-    boardState: List<String?>,
+    boardState: List<Int>,
     onBoxClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -229,17 +208,23 @@ fun TicTacToeBoard(
                     .padding(4.dp),
                 contentAlignment = Alignment.Center
             ) {
-                when (boardState[index]) {
-                    "X" -> Text("X", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                    "O" -> Text("O", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                    else -> {}
-                }
+                Text(
+                    text = when (boardState[index]) {
+                        1 -> "X"
+                        2 -> "O"
+                        //"X" -> Text("X", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                        //"O" -> Text("O", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                        else -> ""//{}
+                    },
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
 }
 
-fun checkForWinner(boardState: List<String?>): String? {
+fun checkForWinner(boardState: List<Int>): Int? {
     val winningCombinations = listOf(
         listOf(0, 1, 2), listOf(3, 4, 5), listOf(6, 7, 8),
         listOf(0, 3, 6), listOf(1, 4, 7), listOf(2, 5, 8),
@@ -248,17 +233,18 @@ fun checkForWinner(boardState: List<String?>): String? {
 
     for (combination in winningCombinations) {
         val (a, b, c) = combination
-        if (boardState[a] != null &&
+        if (boardState[a] != 0 &&
             boardState[a] == boardState[b] &&
-            boardState[a] == boardState[c]) {
+            boardState[a] == boardState[c]
+            ) {
             return boardState[a]
         }
     }
-
+/*
     if (boardState.all { it != null }) {
         return "Draw"
     }
-
+*/
     return null
 }
 
