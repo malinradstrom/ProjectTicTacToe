@@ -103,8 +103,34 @@ fun GameScreen(navController: NavController,
 
             Box(modifier = Modifier.fillMaxSize()) {
                 TicTacToeBoard(
-                    boardState = gameId as List<String?>,
+                    boardState = localGameState //gameState
                     onBoxClick = { index ->
+                        if (localGameBoard[index] == 0 && localGameState == "player${currentPlayer}_turn") {
+                            //update local board
+                            localGameBoard = localGameBoard.toMutableList().apply { set(index, currentPlayer) }
+
+                            val winner = checkForWinner(localGameBoard)
+                            if ( winner != null ) {
+                                localGameState = if (winner == 1) "player1_won" else "player2_won"
+                            } else if (localGameBoard.none { it == 0 }) {
+                                localGameState = "draw"
+                            } else {
+                                currentPlayer = if (currentPlayer == 1) 2 else 1
+                                localGameState = "player${currentPlayer}_turn"
+                            }
+
+                            // Update FireStore
+                            model.db.collection("games").document(gameId)
+                                .update(
+                                    mapOf(
+                                        "gameBoard" to localGameBoard,
+                                        "gameState" to localGameState
+                                    )
+                                )
+                        }
+                    },
+                    modifier = Modifier.size(300.dp)
+                    /*onBoxClick = { index ->
                         if (winner == null && boardState[index] == null) {
                             boardState[index] = currentPlayer
                             winner = checkForWinner(boardState)
@@ -114,11 +140,15 @@ fun GameScreen(navController: NavController,
                                 currentPlayer = if (currentPlayer == "X") "O" else "X"
                             }
                         }
-                    },
-                    modifier = Modifier.align(Alignment.Center)
+                    }*/,
+                    //modifier = Modifier.align(Alignment.Center)
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
+            if (localGameState.endsWith("_won")) {
+                Text( text = "$(if (loca")
+            }
+            /*
             if (winner != null) {
                 if (showWinnerDialog) {
                     Frame18(
@@ -134,7 +164,7 @@ fun GameScreen(navController: NavController,
                         winnerId = winner ?: ""
                     )
                 }
-            }
+            }*/
         }
     }
 }
