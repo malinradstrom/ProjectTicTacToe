@@ -69,7 +69,7 @@ fun MenuScreen(navController: NavController, model: GameModel) {
             .background(color = Color(0xffc1aeca))
     ) {
         Text(
-            text = "Game Requests $playerName",
+            text = "Game Requests \n$playerName",
             color = Color(0xfff5f5f5),
             fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center,
