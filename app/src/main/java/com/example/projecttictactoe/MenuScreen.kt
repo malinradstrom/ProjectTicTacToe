@@ -73,7 +73,7 @@ fun MenuScreen(navController: NavController, model: GameModel) {
             .fillMaxSize(),
         containerColor = Color(0xffc1aeca),
         topBar = {
-            TopBar(navController = navController)
+            Back_Icon_Home(navController = navController)
         },
         content = { innerPadding ->
             Column(
@@ -97,8 +97,9 @@ fun MenuScreen(navController: NavController, model: GameModel) {
     )
 }
 
+
 @Composable
-fun TopBar (navController: NavController) {
+fun Back_Icon_Home (navController: NavController) {
     IconButton(
         onClick = { navController.navigate("HomeScreen") },
         modifier = Modifier

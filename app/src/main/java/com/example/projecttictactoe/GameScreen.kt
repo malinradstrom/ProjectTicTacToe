@@ -6,15 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -27,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +47,8 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
     var localGameState by remember { mutableStateOf(currentGame?.gameState ?: "loading") }
     var localGameBoard by remember { mutableStateOf(currentGame?.gameBoard ?: List(9) { 0 }) }
 
+    val myPlayerId = model.myPlayerId.value
+
     LaunchedEffect(currentGame) {
         currentGame?.let {
             localGameState = it.gameState
@@ -58,114 +56,141 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
         }
     }
 
-    if (currentGame != null) {
-        Column(
+    val isPlayer1 = currentGame?.player1Id == myPlayerId
+    val isPlayer2 = currentGame?.player2Id == myPlayerId
+    val isCurrentPlayerInvolved = isPlayer1 || isPlayer2
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xffc1aeca))
+    ) {
+        Row (
             modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xffc1aeca))
+                .fillMaxWidth()
+                .padding(top = 16.dp, start = 16.dp)
+                .align(Alignment.TopStart),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Title(
+        // Back arrow icon at the top
+            if (localGameState.endsWith("_won") || localGameState == "draw") {
+                Back_Icon_Menu(navController = navController)
+            }
+        }
+
+        if (currentGame != null && isCurrentPlayerInvolved) {
+            Column(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 20.dp),
-                model = model,
-                gameId = gameId
-            )
+                    .fillMaxSize()
+                    .padding(top = 90.dp)
+                    .align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Title(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp),
+                    model = model,
+                    gameId = gameId
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TicTacToeBoard(
-                boardState = localGameBoard,
-                onBoxClick = { index ->
-                    // prevent click if game-over
-                    if (localGameState.endsWith("_won") || localGameState == "draw") {
-                        return@TicTacToeBoard
-                    }
-
-                    // Identify player's turn
-                    val currentPlayerId = if (localGameState == "player1_turn") {
-                        currentGame?.player1Id
-                    } else if (localGameState == "player2_turn") {
-                        currentGame?.player2Id
-                    } else null
-
-                    // if local player's turn
-                    if (model.myPlayerId.value != currentPlayerId) {
-                        return@TicTacToeBoard
-                    }
-
-                    // if box is empty and make move
-                    if (localGameBoard[index] == 0) {
-                        val currentPlayer = if (localGameState == "player1_turn") 1 else 2
-                        localGameBoard = localGameBoard.toMutableList().apply { set(index, currentPlayer) }
-
-                        // control winner or draw
-                        val winner = checkForWinner(localGameBoard)
-                        localGameState = when {
-                            winner != null -> if (winner == 1) "player1_won" else "player2_won"
-                            localGameBoard.none { it == 0 } -> "draw"
-                            else -> if (currentPlayer == 1) "player2_turn" else "player1_turn"
+                TicTacToeBoard(
+                    boardState = localGameBoard,
+                    onBoxClick = { index ->
+                        // prevent click if game-over
+                        if (localGameState.endsWith("_won") || localGameState == "draw") {
+                            return@TicTacToeBoard
                         }
 
-                        // Updater Firestore
-                        model.db.collection("games").document(gameId)
-                            .update(
-                                mapOf(
-                                    "gameBoard" to localGameBoard,
-                                    "gameState" to localGameState
+                        // Determine whose turn it is
+                        val currentPlayerId = when (localGameState) {
+                            "player1_turn" -> currentGame.player1Id
+                            "player2_turn" -> currentGame.player2Id
+                            else -> null
+                        }
+
+                        // current player's turn
+                        if (myPlayerId != currentPlayerId) {
+                            return@TicTacToeBoard
+                        }
+
+                        // if box is empty and make move
+                        if (localGameBoard[index] == 0) {
+                            val currentPlayer = if (localGameState == "player1_turn") 1 else 2
+                            localGameBoard = localGameBoard.toMutableList().apply { set(index, currentPlayer) }
+
+                            // control winner or draw
+                            val winner = checkForWinner(localGameBoard)
+                            localGameState = when {
+                                winner != null -> if (winner == 1) "player1_won" else "player2_won"
+                                localGameBoard.none { it == 0 } -> "draw"
+                                else -> if (currentPlayer == 1) "player2_turn" else "player1_turn"
+                            }
+
+                            // Updater Firestore
+                            model.db.collection("games").document(gameId)
+                                .update(
+                                    mapOf(
+                                        "gameBoard" to localGameBoard,
+                                        "gameState" to localGameState
+                                    )
                                 )
-                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .size(300.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                // player turn and winner
+                when {
+                    localGameState.endsWith("_won") -> {
+                        val winnerName = if (localGameState.startsWith("player1")) {
+                            players[currentGame.player1Id]?.name ?: "Player 1"
+                        } else {
+                            players[currentGame.player2Id]?.name ?: "Player 2"
+                        }
+                        Text(
+                            text = "$winnerName won the game!",
+                            style = MaterialTheme.typography.headlineMedium,
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
                     }
-                },
-                modifier = Modifier
-                    .size(300.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // player turn and winner
-            when {
-                localGameState.endsWith("_won") -> {
-                    val winnerName = if (localGameState.startsWith("player1")) {
-                        players[currentGame.player1Id]?.name ?: "Player 1"
-                    } else {
-                        players[currentGame.player2Id]?.name ?: "Player 2"
+                    localGameState == "draw" -> {
+                        Text(
+                            text = "It's a draw!",
+                            style = MaterialTheme.typography.headlineMedium,
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
                     }
-                    Text(
-                        text = "$winnerName won the game!",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
-                }
 
-                localGameState == "draw" -> {
-                    Text(
-                        text = "It's a draw!",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
-                }
-
-                else -> {
-                    val currentTurnPlayerName = if (localGameState == "player1_turn") {
-                        players[currentGame.player1Id]?.name ?: "Player 1"
-                    } else {
-                        players[currentGame.player2Id]?.name ?: "Player 2"
+                    else -> {
+                        val currentTurnPlayerName = if (localGameState == "player1_turn") {
+                            players[currentGame.player1Id]?.name ?: "Player 1"
+                        } else {
+                            players[currentGame.player2Id]?.name ?: "Player 2"
+                        }
+                        Text(
+                            text = "$currentTurnPlayerName's turn",
+                            style = MaterialTheme.typography.headlineMedium,
+                            textAlign = TextAlign.Center,
+                            color = Color.White
+                        )
                     }
-                    Text(
-                        text = "$currentTurnPlayerName's turn",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
                 }
             }
+        } else {
+            Text(
+                text = "You, gå (o köp en nocco)",
+                modifier = Modifier
+                    .align(Alignment.Center),
+                color = Color.White,
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -275,74 +300,21 @@ fun checkForWinner(boardState: List<Int>): Int? {
 }
 
 @Composable
-fun Frame18(navController: NavController,
-            modifier: Modifier = Modifier,
-            onDismiss: () -> Unit,
-            winnerId: String) {
-    Surface(
-        color = Color(0xffe7e0ec),
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = modifier
+fun Back_Icon_Menu (navController: NavController) {
+    IconButton(
+        onClick = { navController.navigate("MenuScreen") },
+        modifier = Modifier
+            .padding(start = 16.dp, top = 16.dp)
+            .size(50.dp)
+            .clip(shape = RoundedCornerShape(30.dp))
+            .background(color = Color(0xff65558f))
     ) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.arrow_back),
+            contentDescription = "Back icon",
             modifier = Modifier
-                .requiredWidth(width = 320.dp)
-                .requiredHeight(height = 627.dp)
-        ) {
-            val displayText = if (winnerId == "Draw") "It was a Draw" else "Player $winnerId won!"
-            Text(
-                text = displayText,
-                color = Color.Black,
-                fontStyle = FontStyle.Italic,
-                textAlign = TextAlign.Center,
-                lineHeight = 1.06.em,
-                style = TextStyle(
-                    fontSize = 32.sp,
-                    letterSpacing = 0.1.sp
-                ),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 70.dp, y = 120.dp)
-                    .requiredWidth(width = 197.dp)
-                    .requiredHeight(height = 119.dp)
-                    .wrapContentHeight(align = Alignment.CenterVertically)
-            )
-            Button(
-                onClick = { onDismiss(); navController.navigate("MenuScreen")},
-                shape = RoundedCornerShape(100.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff65558f)),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 110.dp, y = 253.dp)
-                    .requiredHeight(height = 40.dp)
-                    .requiredWidth(width = 120.dp)
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .requiredHeight(height = 40.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        Text(
-                            text = "Go to Menu",
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 1.43.em,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier
-                                .wrapContentHeight(align = Alignment.CenterVertically)
-                        )
-                    }
-                }
-            }
-        }
+                .fillMaxSize()
+        )
     }
 }
 
