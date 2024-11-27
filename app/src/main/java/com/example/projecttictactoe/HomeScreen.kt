@@ -77,7 +77,6 @@ fun HomeScreen(
             ) {
                 Title()
                 Spacer(modifier = Modifier.height(16.dp))
-
                 // Input field for the username
                 OutlinedTextField(
                     value = inputName,
@@ -182,7 +181,6 @@ fun Title(modifier: Modifier = Modifier) {
 @Composable
 fun UsernameText(playerName: String) {
     val displayName = if (playerName.isNotEmpty()) playerName else "Fetching username..."
-
     Text(
         text = "Hello, $displayName",
         color = Color(0xfff5f5f5),
