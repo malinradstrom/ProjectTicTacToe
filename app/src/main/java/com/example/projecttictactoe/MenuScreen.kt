@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,18 +40,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.projecttictactoe.com.example.projecttictactoe.GameModel
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.projecttictactoe.Models.Game
+import com.example.projecttictactoe.Models.Player
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.collections.forEach
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuScreen(navController: NavController, model: GameModel) {
-    val players by model.playerMap.asStateFlow().collectAsStateWithLifecycle()
-    val games by model.gameMap.asStateFlow().collectAsStateWithLifecycle()
+    val games by model.gameMap.collectAsState()
+    val players by model.playerMap.collectAsState()
 
     LaunchedEffect(games) {
         games.forEach { (gameId, game) ->
@@ -73,7 +74,7 @@ fun MenuScreen(navController: NavController, model: GameModel) {
             .fillMaxSize(),
         containerColor = Color(0xffc1aeca),
         topBar = {
-            Back_Icon_Home(navController = navController)
+            Back_Icon_Home(model = model, navController = navController)
         },
         content = { innerPadding ->
             Column(
@@ -99,9 +100,25 @@ fun MenuScreen(navController: NavController, model: GameModel) {
 
 
 @Composable
-fun Back_Icon_Home (navController: NavController) {
+fun Back_Icon_Home (navController: NavController, model: GameModel) {
+    val firestore = FirebaseFirestore.getInstance()
+
+    // Function to update the player's status to offline
+    fun updatePlayerStatusOffline() {
+        model.myPlayerId.value?.let { playerId ->
+            val playerRef = firestore.collection("players").document(playerId)
+            playerRef.update("status", false) // Mark player as offline
+                .addOnSuccessListener {
+                    Log.d("PlayerStatus", "Player status updated to offline")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("PlayerStatus", "Error updating player status: $e")
+                }
+        }
+    }
     IconButton(
-        onClick = { navController.navigate("HomeScreen") },
+        onClick = { updatePlayerStatusOffline()
+            navController.navigate("HomeScreen") },
         modifier = Modifier
             .padding(start = 16.dp, top = 16.dp)
             .size(50.dp)
@@ -158,10 +175,10 @@ fun GameRequestList(
             if (documentId != model.myPlayerId.value) {
                 ListItem(
                     headlineContent = {
-                        Text(text = "Player Name: ${player.name}")
+                        Text(text = player.name)
                     },
                     supportingContent = {
-                        Text(text = "Status:")
+                        Text(text = "Status: ${if (player.status) "Online" else "Offline"}")
                     },
                     trailingContent = {
                         ManageGameButtons(
@@ -200,8 +217,8 @@ fun ManageGameButtons(
                     .addOnSuccessListener {
                         navController.navigate("GameScreen/$gameId")
                     }
-                    .addOnFailureListener {
-                        Log.e("Error", "Error updating game: $gameId")
+                    .addOnFailureListener { exception ->
+                        Log.e("MenuScreen", "Error updating game state: $gameId ${exception.message}")
                     }
             }) {
                 Text("Accept Invite")
