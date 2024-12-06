@@ -6,7 +6,7 @@ object Models {
         val name: String = "",
         val status: Boolean = true //assuming true is online
     )
-    
+
     data class Game(
         val gameId: String = "",
         val gameBoard: List<Int> = List(9) { 0 }, // 0: empty, 1: player1's move, 2: player2's move
@@ -15,4 +15,3 @@ object Models {
         val player2Id: String = ""
     )
 }
-

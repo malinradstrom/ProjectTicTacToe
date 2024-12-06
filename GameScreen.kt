@@ -35,7 +35,6 @@ import androidx.navigation.compose.rememberNavController
 import android.media.MediaPlayer
 import androidx.compose.ui.platform.LocalContext
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
@@ -49,10 +48,10 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
 
     val myPlayerId = model.myPlayerId.value
 
-    val context = LocalContext.current // Hanterar resurser som media
+    val context = LocalContext.current
     var mediaPlayer: MediaPlayer? = remember { null }
 
-    // Uppdatera det lokala tillståndet när Firestore-data ändras
+    // Update the local state when Firestore-data changes
     LaunchedEffect(currentGame) {
         currentGame?.let {
             localGameState = it.gameState
@@ -60,14 +59,15 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
         }
     }
 
-    // Starta bakgrundsmusiken
+    // Start background music
     LaunchedEffect(Unit) {
         mediaPlayer = MediaPlayer.create(context, R.raw.jingle_bells).apply {
             isLooping = true
             start()
         }
     }
-    // Stoppa musiken och frigör resurser när skärmen lämnas
+
+    // Stop music and release resources when the screen moves to next
     DisposableEffect(Unit) {
         onDispose {
             mediaPlayer?.stop()
@@ -81,22 +81,29 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
             .fillMaxSize()
             .background(color = Color(0xffc1aeca))
     ) {
+        // Back-button overlay
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Back_Icon_Menu(
+                navController = navController,
+                stopMusic = {
+                    mediaPlayer?.stop()
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart) // Place in the top-left corner
+            )
+        }
+
+        // Main content (game UI)
         if (currentGame != null) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Back-knapp som stänger av musiken och navigerar till menyn
-                Back_Icon_Menu(
-                    navController = navController,
-                    stopMusic = {
-                        mediaPlayer?.stop()
-                        mediaPlayer?.release()
-                        mediaPlayer = null
-                    }
-                )
-
-                // Titeln visar spelets namn och spelarnas namn. Den hämtar data från Firestore för att säkerställa att den alltid är aktuell.
                 Title(
                     modifier = Modifier.padding(top = 16.dp),
                     model = model,
@@ -104,12 +111,11 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Spelbräde för Tic Tac Toe
+                // Tic Tac Toe board
                 TicTacToeBoard(
-            boardState = localGameBoard,
+                    boardState = localGameBoard,
                     gameState = localGameState,
                     onBoxClick = { index ->
-                        // Tillåt inte några drag om spelet är över
                         if (!localGameState.endsWith("_won") && localGameState != "draw") {
                             if (localGameState.startsWith("player") &&
                                 myPlayerId == (if (localGameState == "player1_turn") currentGame.player1Id else currentGame.player2Id)
@@ -128,7 +134,6 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
                     }
                 )
 
-                // Statusmeddelande baserat på spelets status
                 when {
                     localGameState.endsWith("_won") -> Text(
                         text = "${if (localGameState.startsWith("player1")) players[currentGame.player1Id]?.name else players[currentGame.player2Id]?.name} won!",
@@ -144,15 +149,15 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
 
 @Composable
 fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
-    // Hämtar data för spel och spelare från modellen
+    // Fetch data for games and players from the model
     val games by model.gameMap.collectAsState()
     val players by model.playerMap.collectAsState()
 
-    // Hämtar aktuellt spel baserat på gameId
+    // Retrieve the current game based on gameId
     val currentGame = games[gameId]
     val myPlayerId = model.myPlayerId.value
 
-    // Hämtar användarnamn för spelaren och motståndaren
+    // Fetch usernames for the player and opponent
     val myName = players[myPlayerId]?.name ?: "Me"
     val opName = if (myPlayerId == currentGame?.player1Id) {
         players[currentGame!!.player2Id]!!.name
@@ -160,7 +165,7 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
         players[currentGame?.player1Id]?.name ?: "Opponent"
     }
 
-    // Visar titel och spelarinfo
+    // Display title and player information
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -170,8 +175,8 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
             text = "Tic Tac Toe",
             color = Color.White,
             textAlign = TextAlign.Center,
-            lineHeight = 2.5.em, // radavstånd 2.5 em.
-            style = TextStyle( // Definierar textens utseende med storlek, fetstil och en skugga.
+            lineHeight = 2.5.em, // Line spacing 2.5 em.
+            style = TextStyle( // Defines the text's appearance with size, bold style, and a shadow.
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 shadow = Shadow(
@@ -180,7 +185,7 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
                     blurRadius = 4f
                 )
             ),
-            modifier = Modifier.fillMaxWidth() // Gör att texten tar upp hela bredden av layouten.
+            modifier = Modifier.fillMaxWidth() // Makes the text take up the full width of the layout.
         )
         Text(
             text = "$myName vs $opName",
@@ -194,17 +199,17 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
         )
     }
 }
-// Denna funktion definierar själva spelbrädet och hur det visas för användaren:
+// This function defines the actual game board and how it is displayed to the user:
 @Composable
 fun TicTacToeBoard(
-    boardState: List<Int>, // Nuvarande tillstånd för spelbrädet (0 = tom, 1 = X, 2 = O)
-    gameState: String, // Spelets status
-    onBoxClick: (Int) -> Unit, // Callback för klickhändelser
+    boardState: List<Int>, // Current state of the game board (0 = empty, 1 = X, 2 = O)
+    gameState: String, // Game status
+    onBoxClick: (Int) -> Unit, // Callback for click events
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3), // Anger att rutnätet ska ha 3 kolumner
-        modifier = modifier // Sätter storlek, bakgrundsfärg och en kantlinje runt brädet
+        columns = GridCells.Fixed(3), // Specifies that the grid should have 3 columns
+        modifier = modifier // Sets size, background color, and a border around the board
             .requiredSize(300.dp)
             .background(Color.White.copy(alpha = 0.6f))
             .border(border = BorderStroke(2.dp, Color.Black))
@@ -212,9 +217,9 @@ fun TicTacToeBoard(
         items(9) { index ->
             Box(
                 modifier = Modifier
-                    .aspectRatio(1f) // Kvadratiska rutor
+                    .aspectRatio(1f) // Quadrant squares
                     .border(BorderStroke(1.dp, Color.Black))
-                    // Endast klickbar om rutan är tom och spelet inte är över
+                    // Only clickable if the square is empty and the game isn't over
                     .clickable(enabled = gameState.startsWith("player") && boardState[index] == 0) {
                         onBoxClick(index)
                     }
@@ -242,28 +247,32 @@ fun checkForWinner(boardState: List<Int>): Int? {
         listOf(0, 4, 8), listOf(2, 4, 6)
     )
 
-    // Kontrollera varje vinstkombination
+    // Control each winning combination
     for (combination in winningCombinations) {
         val (a, b, c) = combination
         if (boardState[a] != 0 &&
             boardState[a] == boardState[b] &&
             boardState[a] == boardState[c]
         ) {
-            return boardState[a] // Returnera vinnaren (1 eller 2)
+            return boardState[a] // Return winner (1 or 2)
         }
     }
-    return null // Returnera null om ingen har vunnit
+    return null // Return null if no one won
 }
 
 @Composable
-fun Back_Icon_Menu(navController: NavController, stopMusic: () -> Unit) {
+fun Back_Icon_Menu(
+    navController: NavController,
+    stopMusic: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     IconButton(
         onClick = {
-            stopMusic() // Stänger av musiken innan navigering
-            navController.navigate("MenuScreen") // Navigerar till MenuScreen
+            stopMusic()
+            navController.navigate("MenuScreen")
         },
-        modifier = Modifier
-            .padding(start = 16.dp, top = 16.dp)
+        modifier = modifier
+            .padding(16.dp)
             .size(50.dp)
             .clip(shape = RoundedCornerShape(30.dp))
             .background(color = Color(0xff65558f))

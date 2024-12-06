@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.StateFlow
 import android.util.Log
 
 class GameModel : ViewModel() {
-    val db = Firebase.firestore // Firestore-instans
+    val db = Firebase.firestore
 
-    var myPlayerId = mutableStateOf<String?>(null) // Spelarens ID
-    val username = MutableStateFlow<String?>(null) // Spelarens användarnamn
+    var myPlayerId = mutableStateOf<String?>(null) // Player ID
+    val username = MutableStateFlow<String?>(null) // Username
 
-    private val _playerMap = MutableStateFlow<Map<String, Player>>(emptyMap()) // Spelarkarta
+    private val _playerMap = MutableStateFlow<Map<String, Player>>(emptyMap()) // PlayerMap
     val playerMap: StateFlow<Map<String, Player>> = _playerMap
 
-    private val _gameMap = MutableStateFlow<Map<String, Game>>(emptyMap()) // Spelkarta
+    private val _gameMap = MutableStateFlow<Map<String, Game>>(emptyMap()) // GameMap
     val gameMap: StateFlow<Map<String, Game>> = _gameMap
 
-    /* Observerar laddningsstatus (endast internt)
+    /* Observe loading status (internally)
     private val _isLoading = MutableStateFlow(false)
     */
 
@@ -84,6 +84,6 @@ class GameModel : ViewModel() {
     }
 }
 /*
-*  addSnapshotListner är både spel och spelare alltid synksroniserade med Firestore.
-*  StateFlow och mutableStateOf gör att UI-komponenter uppdateras automatiskt när data ändras.
+*  addSnapshotListener both game and players are always synchronised with Firestore.
+*  StateFlow and mutableStateOf allow UI-Components to update automatically when data changes.
 * */

@@ -44,13 +44,13 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun HomeScreen(
     navController: NavController,
-    model: GameModel = viewModel() // Instans av GameModel
+    model: GameModel = viewModel() // Instance of GameModel
 ) {
-    // En variabel för att hålla användarens inmatade namn!
+    // A variable to hold the user's input name
     var inputName by remember { mutableStateOf("") }
-    // Kontrollera om användaren redan existerar
+    // Check if the user already exists
     if (model.myPlayerId.value == null) {
-        // Visa skärm för att skapa ny användare
+        // Display screen for creating a new user
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             containerColor = Color(0xffc1aeca)
@@ -63,13 +63,13 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Title() // Titel på skärmen
+                Title() // Screen title
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Inmatningsfält för att ange användarnamn
+                // Input field for entering username
                 OutlinedTextField(
                     value = inputName,
-                    onValueChange = { inputName = it }, // Uppdaterar inputName
+                    onValueChange = { inputName = it }, // Update inputName
                     label = { Text("Enter Username") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -77,11 +77,11 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Knapp för att skapa spelaren
+                // Button to create the player
                 OutlinedButton(
                     onClick = {
                         if (inputName.isNotBlank()) {
-                            // Skapa en spelare och navigera till menyn
+                            // Create a player and navigate to the menu
                             model.createPlayer(inputName) { newPlayerId ->
                                 navController.navigate("MenuScreen")
                             }
@@ -103,9 +103,9 @@ fun HomeScreen(
             }
         }
     } else {
-        // Om användaren existerar, visas deras namn och en knapp för att gå till menyn
+        // If the user exists, display their name and a button to go to the menu
         LaunchedEffect(Unit) {
-            // Hämta spelarens namn från Firestore
+            // Fetch the player's name from Firestore
             model.myPlayerId.value?.let { playerId ->
                 model.db.collection("players").document(playerId)
                     .get()
@@ -130,16 +130,16 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Title() // Titel
+                Title()
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Visar hälsning med användarnamnet
+                // Displays greeting with the username
                 val playerName by model.username.collectAsState()
                 UsernameText(playerName ?: "Unknown")
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Knapp för att navigera till menyn
+                // Button to navigate to the menu
                 OutlinedButton(
                     onClick = { navController.navigate("MenuScreen") },
                     modifier = Modifier
