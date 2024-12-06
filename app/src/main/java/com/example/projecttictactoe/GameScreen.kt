@@ -1,6 +1,5 @@
 package com.example.projecttictactoe
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +32,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import android.media.MediaPlayer
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,14 +43,15 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
 
     val currentGame = games[gameId]
 
-    var isLoading by remember { mutableStateOf(false) }
-
-    // local copies of gameState
-    var localGameState by remember { mutableStateOf(currentGame?.gameState ?: "loading") }
     var localGameBoard by remember { mutableStateOf(currentGame?.gameBoard ?: List(9) { 0 }) }
+    var localGameState by remember { mutableStateOf(currentGame?.gameState ?: "loading") }
 
     val myPlayerId = model.myPlayerId.value
 
+    val context = LocalContext.current
+    var mediaPlayer: MediaPlayer? = remember { null }
+
+    // Update the local state when Firestore-data changes
     LaunchedEffect(currentGame) {
         currentGame?.let {
             localGameState = it.gameState
@@ -58,182 +59,105 @@ fun GameScreen(navController: NavController, model: GameModel, gameId: String) {
         }
     }
 
-    val isPlayer1 = currentGame?.player1Id == myPlayerId
-    val isPlayer2 = currentGame?.player2Id == myPlayerId
-    val isCurrentPlayerInvolved = isPlayer1 || isPlayer2
+    // Start background music
+    LaunchedEffect(Unit) {
+        mediaPlayer = MediaPlayer.create(context, R.raw.jingle_bells).apply {
+            isLooping = true
+            start()
+        }
+    }
+
+    // Stop music and release resources when the screen moves to next
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xffc1aeca))
     ) {
-        Row (
+        // Back-button overlay
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp)
-                .align(Alignment.TopStart),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
         ) {
-        // Back arrow icon at the top
-            if (localGameState.endsWith("_won") || localGameState == "draw") {
-                Back_Icon_Menu(navController = navController)
-            }
+            Back_Icon_Menu(
+                navController = navController,
+                stopMusic = {
+                    mediaPlayer?.stop()
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart) // Place in the top-left corner
+            )
         }
 
-        if (currentGame != null && isCurrentPlayerInvolved) {
-            if (isLoading) {
-                //Display loading indicator
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color.White)
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 90.dp)
-                        .align(Alignment.TopCenter),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Title(
-                        modifier = Modifier
-                            .padding(vertical = 20.dp),
-                        model = model,
-                        gameId = gameId
-                    )
+        // Main content (game UI)
+        if (currentGame != null) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Title(
+                    modifier = Modifier.padding(top = 16.dp),
+                    model = model,
+                    gameId = gameId
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    TicTacToeBoard(
-                        boardState = localGameBoard,
-                        onBoxClick = { index ->
-                            if (!isLoading) {
-                                // prevent click if game-over
-                                if (localGameState.endsWith("_won") || localGameState == "draw") {
-                                    return@TicTacToeBoard
+                // Tic Tac Toe board
+                TicTacToeBoard(
+                    boardState = localGameBoard,
+                    gameState = localGameState,
+                    onBoxClick = { index ->
+                        if (!localGameState.endsWith("_won") && localGameState != "draw") {
+                            if (localGameState.startsWith("player") &&
+                                myPlayerId == (if (localGameState == "player1_turn") currentGame.player1Id else currentGame.player2Id)
+                            ) {
+                                val newBoard = localGameBoard.toMutableList().apply {
+                                    set(index, if (localGameState == "player1_turn") 1 else 2)
                                 }
-
-                                // Determine whose turn it is
-                                val currentPlayerId = when (localGameState) {
-                                    "player1_turn" -> currentGame.player1Id
-                                    "player2_turn" -> currentGame.player2Id
-                                    else -> null
-                                }
-
-                                // current player's turn
-                                if (myPlayerId != currentPlayerId) {
-                                    return@TicTacToeBoard
-                                }
-
-                                // if box is empty and make move
-                                if (localGameBoard[index] == 0) {
-                                    val currentPlayer =
-                                        if (localGameState == "player1_turn") 1 else 2
-                                    localGameBoard = localGameBoard.toMutableList()
-                                        .apply { set(index, currentPlayer) }
-
-                                    // control winner or draw
-                                    val winner = checkForWinner(localGameBoard)
-                                    localGameState = when {
-                                        winner != null -> if (winner == 1) "player1_won" else "player2_won"
-                                        localGameBoard.none { it == 0 } -> "draw"
-                                        else -> if (currentPlayer == 1) "player2_turn" else "player1_turn"
-                                    }
-
-                                    isLoading = true
-
-                                    // Updater Firestore
-                                    model.db.collection("games").document(gameId)
-                                        .update(
-                                            mapOf(
-                                                "gameBoard" to localGameBoard,
-                                                "gameState" to localGameState
-                                            )
-                                        )
-                                        .addOnSuccessListener {
-                                            isLoading = false
-                                            Log.d("GameScreen", "Game state updated successfully")
-                                        }
-                                        .addOnFailureListener {
-                                            isLoading = false
-                                            Log.e(
-                                                "GameScreen",
-                                                "Failed to update game state: $gameId")
-                                        }
-                                }
+                                val newState = checkForWinner(newBoard)?.let { winner ->
+                                    if (winner == 1) "player1_won" else "player2_won"
+                                } ?: if (newBoard.none { it == 0 }) "draw" else if (localGameState == "player1_turn") "player2_turn" else "player1_turn"
+                                localGameBoard = newBoard
+                                localGameState = newState
+                                model.updateGame(gameId, newBoard, newState)
                             }
-                        },
-                        modifier = Modifier
-                            .size(300.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .then(if (isLoading) Modifier.clickable(enabled = false) {} else Modifier)
-                    )
-
-                    // player turn and winner
-                    when {
-                        localGameState.endsWith("_won") -> {
-                            val winnerName = if (localGameState.startsWith("player1")) {
-                                players[currentGame.player1Id]?.name ?: "Player 1"
-                            } else {
-                                players[currentGame.player2Id]?.name ?: "Player 2"
-                            }
-                            Text(
-                                text = "$winnerName won the game!",
-                                style = MaterialTheme.typography.headlineMedium,
-                                textAlign = TextAlign.Center,
-                                color = Color.White
-                            )
-                        }
-
-                        localGameState == "draw" -> {
-                            Text(
-                                text = "It's a draw!",
-                                style = MaterialTheme.typography.headlineMedium,
-                                textAlign = TextAlign.Center,
-                                color = Color.White
-                            )
-                        }
-
-                        else -> {
-                            val currentTurnPlayerName = if (localGameState == "player1_turn") {
-                                players[currentGame.player1Id]?.name ?: "Player 1"
-                            } else {
-                                players[currentGame.player2Id]?.name ?: "Player 2"
-                            }
-                            Text(
-                                text = "$currentTurnPlayerName's turn",
-                                style = MaterialTheme.typography.headlineMedium,
-                                textAlign = TextAlign.Center,
-                                color = Color.White
-                            )
                         }
                     }
+                )
+
+                when {
+                    localGameState.endsWith("_won") -> Text(
+                        text = "${if (localGameState.startsWith("player1")) players[currentGame.player1Id]?.name else players[currentGame.player2Id]?.name} won!",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    localGameState == "draw" -> Text("It's a draw!")
+                    else -> Text("${if (localGameState == "player1_turn") players[currentGame.player1Id]?.name else players[currentGame.player2Id]?.name}'s turn")
                 }
             }
-        } else {
-            Text(
-                text = "You, gå (o köp en nocco)",
-                modifier = Modifier
-                    .align(Alignment.Center),
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }
 
 @Composable
 fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
+    // Fetch data for games and players from the model
     val games by model.gameMap.collectAsState()
     val players by model.playerMap.collectAsState()
 
+    // Retrieve the current game based on gameId
     val currentGame = games[gameId]
     val myPlayerId = model.myPlayerId.value
 
+    // Fetch usernames for the player and opponent
     val myName = players[myPlayerId]?.name ?: "Me"
     val opName = if (myPlayerId == currentGame?.player1Id) {
         players[currentGame!!.player2Id]!!.name
@@ -241,6 +165,7 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
         players[currentGame?.player1Id]?.name ?: "Opponent"
     }
 
+    // Display title and player information
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -250,8 +175,8 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
             text = "Tic Tac Toe",
             color = Color.White,
             textAlign = TextAlign.Center,
-            lineHeight = 2.5.em,
-            style = TextStyle(
+            lineHeight = 2.5.em, // Line spacing 2.5 em.
+            style = TextStyle( // Defines the text's appearance with size, bold style, and a shadow.
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 shadow = Shadow(
@@ -260,7 +185,7 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
                     blurRadius = 4f
                 )
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth() // Makes the text take up the full width of the layout.
         )
         Text(
             text = "$myName vs $opName",
@@ -274,16 +199,17 @@ fun Title(modifier: Modifier = Modifier, model: GameModel, gameId: String) {
         )
     }
 }
-
+// This function defines the actual game board and how it is displayed to the user:
 @Composable
 fun TicTacToeBoard(
-    boardState: List<Int>,
-    onBoxClick: (Int) -> Unit,
+    boardState: List<Int>, // Current state of the game board (0 = empty, 1 = X, 2 = O)
+    gameState: String, // Game status
+    onBoxClick: (Int) -> Unit, // Callback for click events
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = modifier
+        columns = GridCells.Fixed(3), // Specifies that the grid should have 3 columns
+        modifier = modifier // Sets size, background color, and a border around the board
             .requiredSize(300.dp)
             .background(Color.White.copy(alpha = 0.6f))
             .border(border = BorderStroke(2.dp, Color.Black))
@@ -291,9 +217,12 @@ fun TicTacToeBoard(
         items(9) { index ->
             Box(
                 modifier = Modifier
-                    .aspectRatio(1f)
+                    .aspectRatio(1f) // Quadrant squares
                     .border(BorderStroke(1.dp, Color.Black))
-                    .clickable { onBoxClick(index) }
+                    // Only clickable if the square is empty and the game isn't over
+                    .clickable(enabled = gameState.startsWith("player") && boardState[index] == 0) {
+                        onBoxClick(index)
+                    }
                     .padding(4.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -318,33 +247,40 @@ fun checkForWinner(boardState: List<Int>): Int? {
         listOf(0, 4, 8), listOf(2, 4, 6)
     )
 
+    // Control each winning combination
     for (combination in winningCombinations) {
         val (a, b, c) = combination
         if (boardState[a] != 0 &&
             boardState[a] == boardState[b] &&
             boardState[a] == boardState[c]
-            ) {
-            return boardState[a]
+        ) {
+            return boardState[a] // Return winner (1 or 2)
         }
     }
-    return null
+    return null // Return null if no one won
 }
 
 @Composable
-fun Back_Icon_Menu (navController: NavController) {
+fun Back_Icon_Menu(
+    navController: NavController,
+    stopMusic: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     IconButton(
-        onClick = { navController.navigate("MenuScreen") },
-        modifier = Modifier
-            .padding(start = 16.dp, top = 16.dp)
+        onClick = {
+            stopMusic()
+            navController.navigate("MenuScreen")
+        },
+        modifier = modifier
+            .padding(16.dp)
             .size(50.dp)
             .clip(shape = RoundedCornerShape(30.dp))
             .background(color = Color(0xff65558f))
     ) {
         Image(
             painter = painterResource(id = R.drawable.arrow_back),
-            contentDescription = "Back icon",
-            modifier = Modifier
-                .fillMaxSize()
+            contentDescription = "Back to Menu",
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

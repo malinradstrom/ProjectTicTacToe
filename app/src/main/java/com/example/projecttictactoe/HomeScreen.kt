@@ -44,30 +44,18 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun HomeScreen(
     navController: NavController,
-    model: GameModel = viewModel(),
+    model: GameModel = viewModel() // Instance of GameModel
 ) {
+    // A variable to hold the user's input name
     var inputName by remember { mutableStateOf("") }
-
-    // When player is not created yet, show the username input and create player button
+    // Check if the user already exists
     if (model.myPlayerId.value == null) {
-        LaunchedEffect(Unit) {
-            model.myPlayerId.value?.let { playerId ->
-                model.db.collection("players").document(playerId)
-                    .get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        if (documentSnapshot.exists()) {
-                            val fetchedName = documentSnapshot.getString("name") ?: "Player"
-                            model.username.value = fetchedName
-                        }
-                    }
-            }
-        }
-
-        Scaffold (
+        // Display screen for creating a new user
+        Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = Color(0xffc1aeca),
+            containerColor = Color(0xffc1aeca)
         ) { innerPadding ->
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -75,12 +63,13 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Title()
+                Title() // Screen title
                 Spacer(modifier = Modifier.height(16.dp))
-                // Input field for the username
+
+                // Input field for entering username
                 OutlinedTextField(
                     value = inputName,
-                    onValueChange = { inputName = it },
+                    onValueChange = { inputName = it }, // Update inputName
                     label = { Text("Enter Username") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -88,10 +77,11 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Create Player Button
+                // Button to create the player
                 OutlinedButton(
                     onClick = {
                         if (inputName.isNotBlank()) {
+                            // Create a player and navigate to the menu
                             model.createPlayer(inputName) { newPlayerId ->
                                 navController.navigate("MenuScreen")
                             }
@@ -113,10 +103,24 @@ fun HomeScreen(
             }
         }
     } else {
-        // When player exists, show the username and "Go to Menu" button
+        // If the user exists, display their name and a button to go to the menu
+        LaunchedEffect(Unit) {
+            // Fetch the player's name from Firestore
+            model.myPlayerId.value?.let { playerId ->
+                model.db.collection("players").document(playerId)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        if (documentSnapshot.exists()) {
+                            val fetchedName = documentSnapshot.getString("name") ?: "Player"
+                            model.username.value = fetchedName
+                        }
+                    }
+            }
+        }
+
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            containerColor = Color(0xffc1aeca),
+            containerColor = Color(0xffc1aeca)
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -129,14 +133,13 @@ fun HomeScreen(
                 Title()
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Collecting the username from the StateFlow
+                // Displays greeting with the username
                 val playerName by model.username.collectAsState()
-                // Display the username
-                UsernameText(playerName ?:"Unknown")
+                UsernameText(playerName ?: "Unknown")
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Button to navigate to MenuScreen
+                // Button to navigate to the menu
                 OutlinedButton(
                     onClick = { navController.navigate("MenuScreen") },
                     modifier = Modifier

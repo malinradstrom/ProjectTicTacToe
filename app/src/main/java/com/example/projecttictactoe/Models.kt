@@ -6,16 +6,6 @@ object Models {
         val name: String = "",
         val status: Boolean = true //assuming true is online
     )
-    /*
-    enum class GameState {
-        INVITE,
-        WAITING,
-        PLAYER1_TURN,
-        PLAYER2_TURN,
-        DRAW,
-        WIN
-    }
-    */
 
     data class Game(
         val gameId: String = "",
