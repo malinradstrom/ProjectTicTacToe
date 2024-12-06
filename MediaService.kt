@@ -9,13 +9,15 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+
+@Suppress("DEPRECATION")
 class MediaService : Service() {
 
     private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel() // Skapa kanalen
+        createNotificationChannel() // Create channel
     }
 
     @SuppressLint("ForegroundServiceType")

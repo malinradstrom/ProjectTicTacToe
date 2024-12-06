@@ -1,4 +1,6 @@
 package com.example.projecttictactoe
+
+//import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,11 +12,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.projecttictactoe.ui.theme.ProjectTicTacToeTheme
 
-
 class MainActivity : ComponentActivity() {
-    // Delar en instans av GameModel över hela aktiviteten
+    // Shares an instance of GameModel across the entire activity
     private val gameModel: GameModel by viewModels()
 
+    /*override fun onStop() {
+        super.onStop()
+        val intent = Intent(this, MediaService::class.java)
+        stopService(intent) // Stops the service when the app goes into the background
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        val intent = Intent(this, MediaService::class.java)
+        stopService(intent) // Completely stop the music when the app is closed
+    }
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,7 +37,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun TicTacToe(gameModel: GameModel) {
     val navController = rememberNavController()
@@ -35,9 +46,9 @@ fun TicTacToe(gameModel: GameModel) {
     ) {
         composable("HomeScreen") { HomeScreen(navController, gameModel) }
         composable("MenuScreen") { MenuScreen(navController, gameModel) }
-        // Definierar GameScreen som en skärm med ett argument (gameId)
+        // Defines GameScreen as a screen with an argument (gameId)
         composable("GameScreen/{gameId}") { backStackEntry ->
-            // Hämtar gameId från argumenten som skickas till skärmen
+            // Retrieves gameId from the arguments passed to the screen
             val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
             GameScreen(navController, gameModel, gameId)
         }
